@@ -22,7 +22,7 @@ function varargout = mainControls(varargin)
 
 % Edit the above text to modify the response to help mainControls
 
-% Last Modified by GUIDE v2.5 13-Dec-2011 15:37:44
+% Last Modified by GUIDE v2.5 22-May-2015 16:24:10
 
 %% CHANGES
 % VI041308A: Disallow external triggering for multi-slice acquisitions -- Vijay Iyer 4/13/2008
@@ -244,6 +244,9 @@ function scanRotation_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of scanRotation as text
 %        str2double(get(hObject,'String')) returns contents of scanRotation as a double
 updateScanParameter(hObject);
+% axes(handles.axes1); %AS
+% cla; %AS
+updatePlot() %AS
 
 % --- Executes on slider movement.
 function scanRotationSlider_Callback(hObject, eventdata, handles)
@@ -254,6 +257,9 @@ function scanRotationSlider_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 updateScanParameter(hObject);
+% axes(handles.axes1); %AS
+% cla; %AS
+updatePlot() %AS
 
 % --- Executes on button press in pbRoot.
 function pbRoot_Callback(hObject, eventdata, handles)
@@ -324,10 +330,12 @@ setScanProps(h);
 % --------------------------------------------------------------------
 function varargout = scanShiftSlow_Callback(h, eventdata, handles, varargin)
 updateScanParameter(h);
+updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = scanShiftFast_Callback(h, eventdata, handles, varargin)
 updateScanParameter(h);
+updatePlot() %AS
 
 
 % --------------------------------------------------------------------
@@ -818,7 +826,7 @@ updateGUIByGlobal('state.acq.scanRotation');
 setScanProps(h);
 
 updateRSPs();
-
+updatePlot() %AS
 return;
 
 % % --------------------------------------------------------------------
@@ -1978,4 +1986,60 @@ setScanProps();
 updateRSPs();
 updateScanAngleMultiplierSlow
             
+
+
+
+
+function XRotation_Callback(hObject, eventdata, handles) %AS
+% hObject    handle to XRotation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of XRotation as text
+%        str2double(get(hObject,'String')) returns contents of XRotation as a double
+updatePlot()
+
+
+% --- Executes during object creation, after setting all properties. 
+function XRotation_CreateFcn(hObject, eventdata, handles) %AS
+% hObject    handle to XRotation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in UpdatePlot. 
+function UpdatePlot_Callback(hObject, eventdata, handles) %AS
+% hObject    handle to UpdatePlot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+updatePlot()
+
+function updatePlot() %AS
+
+global state
+
+colormap(copper)
+z = zeros(size(state.acq.mirrorDataOutput(:,1)));
+
+if strcmp(state.internal.lastStartMode, 'focus') && strcmp(state.internal.statusString,'Focusing...')
+    hold on
+    plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),z,'k');
+    plot3(0,0,0,'r.')
+    hold off
+    disp('Focusing, plotting mirrorDataOutput')
+    
+else
+    linTransformMirrorData();
+    hold on
+    scatter3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),z,1,z); 
+    plot3(0,0,0,'r.')
+    hold off
+    disp('Not focusing, plotting a linTranformed plane with current parameters')
+end
 
