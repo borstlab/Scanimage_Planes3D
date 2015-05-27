@@ -313,7 +313,7 @@ global gh state
 setZoomValue(1); %VI010909A
 %updateZoomStrings; %VI010609A
 setScanProps(h);
-
+updatePlot() %AS
 
 
 %%%%%From 3.0%%%%
@@ -349,6 +349,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftFast');
 setScanProps(h);
 updateRSPs();
+updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = left_Callback(h, eventdata, handles, varargin)
@@ -361,6 +362,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftFast');
 setScanProps(h);
 updateRSPs();
+updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = down_Callback(h, eventdata, handles, varargin)
@@ -373,6 +375,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftSlow');
 setScanProps(h);
 updateRSPs();
+updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = up_Callback(h, eventdata, handles, varargin)
@@ -385,6 +388,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftSlow');
 setScanProps(h);
 updateRSPs();
+updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = zero_Callback(h, eventdata, handles, varargin)
@@ -395,6 +399,7 @@ state.acq.scanShiftFast = 0;
 updateGUIByGlobal('state.acq.scanShiftFast');
 setScanProps(h);
 updateRSPs();
+updatePlot() %AS
 
 % % --------------------------------------------------------------------
 % function done = drawROISI(handle)
@@ -648,6 +653,7 @@ setZoomValue(str2num([num2str(round(state.acq.zoomhundreds))...
 
 %Effect the change on the scan parameters
 setScanProps(h);
+updatePlot() %AS
 
 % % --------------------------------------------------------------------
 % function varargout = shutterDelay_Callback(h, eventdata, handles, varargin)
@@ -756,6 +762,7 @@ if all(strcmpi(get(buttonHandles, 'Visible'), 'on'))
     if done
         setScanProps(h);
         snapShot(1);
+        updatePlot() %AS
     end
 else
     beep;
@@ -1127,6 +1134,7 @@ function etScanAngleMultiplierFast_Callback(hObject, eventdata, handles)
 updateScanParameter(hObject);
 %updateScanAmplitude();
 %applyConfigurationSettings();
+updatePlot() %AS
 
 function etScanAngleMultiplierSlow_Callback(hObject, eventdata, handles)
 % hObject    handle to etScanAngleMultiplierSlow (see GCBO)
@@ -1138,6 +1146,7 @@ function etScanAngleMultiplierSlow_Callback(hObject, eventdata, handles)
 updateScanParameter(hObject);
 %updateScanAmplitude();
 %applyConfigurationSettings();
+updatePlot() %AS
 
 % % disable LS mode, if necessary
 % global state
@@ -2024,22 +2033,19 @@ function updatePlot() %AS
 
 global state
 
-colormap(copper)
-z = zeros(size(state.acq.mirrorDataOutput(:,1)));
-
 if strcmp(state.internal.lastStartMode, 'focus') && strcmp(state.internal.statusString,'Focusing...')
-    hold on
-    plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),z,'k');
-    plot3(0,0,0,'r.')
-    hold off
+    %colormap(copper)
+    %tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
+    %trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'EdgeColor','None');
+    plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'k.');
     disp('Focusing, plotting mirrorDataOutput')
     
 else
     linTransformMirrorData();
-    hold on
-    scatter3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),z,1,z); 
-    plot3(0,0,0,'r.')
-    hold off
+    %colormap(copper)
+    tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
+    trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'EdgeColor','None');
+    %plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'k.'); 
     disp('Not focusing, plotting a linTranformed plane with current parameters')
 end
 
