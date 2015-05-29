@@ -22,7 +22,7 @@ function varargout = mainControls(varargin)
 
 % Edit the above text to modify the response to help mainControls
 
-% Last Modified by GUIDE v2.5 22-May-2015 16:24:10
+% Last Modified by GUIDE v2.5 29-May-2015 10:56:23
 
 %% CHANGES
 % VI041308A: Disallow external triggering for multi-slice acquisitions -- Vijay Iyer 4/13/2008
@@ -2007,7 +2007,7 @@ function XRotation_Callback(hObject, eventdata, handles) %AS
 % Hints: get(hObject,'String') returns contents of XRotation as text
 %        str2double(get(hObject,'String')) returns contents of XRotation as a double
 updatePlot()
-
+updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties. 
 function XRotation_CreateFcn(hObject, eventdata, handles) %AS
@@ -2017,9 +2017,7 @@ function XRotation_CreateFcn(hObject, eventdata, handles) %AS
 
 % Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
+generic_CreateFcn(hObject,eventdata,handles,'white');
 
 
 % --- Executes on button press in UpdatePlot. 
@@ -2028,6 +2026,7 @@ function UpdatePlot_Callback(hObject, eventdata, handles) %AS
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 updatePlot()
+
 
 function updatePlot() %AS
 
@@ -2048,4 +2047,114 @@ else
     %plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'k.'); 
     disp('Not focusing, plotting a linTranformed plane with current parameters')
 end
+
+
+
+
+function YRotation_Callback(hObject, eventdata, handles)
+% hObject    handle to YRotation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of YRotation as text
+%        str2double(get(hObject,'String')) returns contents of YRotation as a double
+updatePlot()
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function YRotation_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to YRotation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+% --- Executes on slider movement.
+function XRotationSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to XRotationSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+updatePlot()
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function XRotationSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to XRotationSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+
+% --- Executes on slider movement.
+function YRotationSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to YRotationSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+updatePlot()
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function YRotationSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to YRotationSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+% --- Executes on slider movement.
+function ZAbsoluteSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to ZAbsoluteSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+updatePlot()
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function ZAbsoluteSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ZAbsoluteSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+
+
+function ZAbsolute_Callback(hObject, eventdata, handles)
+% hObject    handle to ZAbsolute (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of ZAbsolute as text
+%        str2double(get(hObject,'String')) returns contents of ZAbsolute as a double
+updatePlot()
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function ZAbsolute_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ZAbsolute (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+generic_CreateFcn(hObject,eventdata,handles,'white');
 
