@@ -36,7 +36,8 @@ primaryMirrorTasks = [state.init.hAO];
 for i=1:length(mirrorTasks)
     xChan = mirrorTasks(i).createAOVoltageChan(state.init.mirrorOutputBoardID, state.init.XMirrorChannelID, 'X-Mirror',-state.init.outputVoltageRange,state.init.outputVoltageRange); %VI091910A
     yChan = mirrorTasks(i).createAOVoltageChan(state.init.mirrorOutputBoardID, state.init.YMirrorChannelID, 'Y-Mirror',-state.init.outputVoltageRange,state.init.outputVoltageRange); %VI091910A
-    
+    zChan = mirrorTasks(i).createAOVoltageChan(state.init.ZmirrorOutputBoardID, state.init.ZMirrorChannelID, 'Z-Mirror',-state.init.outputVoltageRange,state.init.outputVoltageRange); %AS
+
     %Configure GRAB and FOCUS AO Mirror Tasks. The PARK AO Mirror Task does not require configuration (default timing/triggering is OK).
     if ismember(mirrorTasks(i),primaryMirrorTasks)
         mirrorTasks(i).cfgSampClkTiming(state.acq.outputRate, 'DAQmx_Val_FiniteSamps'); %TODO: Revisit whether final argument is req'd here

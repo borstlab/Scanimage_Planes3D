@@ -63,6 +63,8 @@ fast = makeFrameCommandFast(fast); %VI091708A
 slow = makeFrameCommandSlow(linspace(0,(state.acq.linesPerFrame * state.acq.msPerLine * 1e-3), ... 
     (samplesPerLine * state.acq.linesPerFrame)), 0, state.internal.scanAmplitudeSlow); %VI110210A
 
+z = zeros(size(slow)); %AS
+
 %%%VI092010B: Removed%%%%%
 % if state.acq.fastScanningX
 %     finalMirrorDataOutput = [fast slow]; 
@@ -70,7 +72,7 @@ slow = makeFrameCommandSlow(linspace(0,(state.acq.linesPerFrame * state.acq.msPe
 %     finalMirrorDataOutput = [slow fast];
 % end
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-finalMirrorDataOutput = [fast slow]; %VI092010B
+finalMirrorDataOutput = [fast slow z]; %VI092010B %AS
 
 %Cache original waveform (at base zoom), and the scan parameters used to make this waveform
 state.acq.mirrorDataOutputOrg = finalMirrorDataOutput; 
