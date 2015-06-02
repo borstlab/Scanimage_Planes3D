@@ -2036,14 +2036,14 @@ if strcmp(state.internal.lastStartMode, 'focus') && strcmp(state.internal.status
     %colormap(copper)
     %tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
     %trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'EdgeColor','None');
-    plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'k.');
+    plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),state.acq.mirrorDataOutput(:,3),'k.');
     disp('Focusing, plotting mirrorDataOutput')
     
 else
     linTransformMirrorData();
     %colormap(copper)
     tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
-    trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'EdgeColor','None');
+    trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),state.acq.mirrorDataOutput(:,3),'EdgeColor','None');
     %plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'k.'); 
     disp('Not focusing, plotting a linTranformed plane with current parameters')
 end

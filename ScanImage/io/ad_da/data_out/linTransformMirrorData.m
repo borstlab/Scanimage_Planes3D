@@ -58,7 +58,7 @@ end
 %Scale the base mirror data 
 scaledMirrorDataOutput = state.acq.mirrorDataOutputOrg / state.acq.zoomFactor; %VI013109B
 scaledMirrorDataOutput = scaledMirrorDataOutput .* ... %VI052011A
-    repmat([state.acq.scanAngleMultiplierFast state.acq.scanAngleMultiplierSlow],length(scaledMirrorDataOutput),1);
+    repmat([state.acq.scanAngleMultiplierFast state.acq.scanAngleMultiplierSlow 1],length(scaledMirrorDataOutput),1); %AS added 1 for z
 scaledMirrorDataOutput(isinf(scaledMirrorDataOutput)) = 0;
 %%%VI013109B: Removed %%%%%%%%%
 % if state.acq.zoomFactor < state.acq.baseZoomFactor
@@ -77,21 +77,37 @@ scaledMirrorDataOutput(isinf(scaledMirrorDataOutput)) = 0;
 lengthofframedata = size(scaledMirrorDataOutput,1); %VI092808A
 %lengthofframedata = lengthofframedata(1,1);
 
-c = cos(state.acq.scanRotation*pi/180);
-s = sin(state.acq.scanRotation*pi/180);
+x_angle = state.acq.XRotation*pi/180; %AS
+y_angle = state.acq.YRotation*pi/180; %AS
+z_angle = state.acq.scanRotation*pi/180; %AS
+
+%c = cos(state.acq.scanRotation*pi/180);
+%s = sin(state.acq.scanRotation*pi/180);
+
+RM_x = [1 0 0; 0 cos(x_angle) -sin(x_angle); 0 sin(x_angle) cos(x_angle)]; %AS
+RM_y = [cos(y_angle) 0 sin(y_angle); 0 1 0; -sin(y_angle) 0 cos(y_angle)]; %AS
+RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1]; %AS
+RM = RM_x*RM_y*RM_z;  %AS
+orth_v = [0 0 1]*RM; %AS
+%center_p = [0 0 0] + [0 0 state.acq.ZAbsolute*state.init.voltsPerMicroMeterZ] + orth_v*z_rel; %AS TODO 
 
 %a = 1:lengthofframedata;
 % finalMirrorDataOutput(a,1)=finalMirrorDataOutput(a,1);
 % finalMirrorDataOutput(a,2)=finalMirrorDataOutput(a,2);
-state.acq.mirrorDataOutput = zeros(lengthofframedata,2); %VI010809A
-state.acq.mirrorDataOutput(:,1) = (c*scaledMirrorDataOutput(:,1) + s*scaledMirrorDataOutput(:,2)) + (state.acq.scanShiftFast * state.init.voltsPerOpticalDegree); %VI110310A %VI092010A %VI091208A
-state.acq.mirrorDataOutput(:,2) = (c*scaledMirrorDataOutput(:,2) - s*scaledMirrorDataOutput(:,1)) + (state.acq.scanShiftSlow * state.init.voltsPerOpticalDegree); %VI110310A %VI092010A %VI091208A
+state.acq.mirrorDataOutput = zeros(lengthofframedata,3); %VI010809A %AS 3 instead of 2
+%state.acq.mirrorDataOutput(:,1) = (c*scaledMirrorDataOutput(:,1) + s*scaledMirrorDataOutput(:,2)) + (state.acq.scanShiftFast * state.init.voltsPerOpticalDegree); %VI110310A %VI092010A %VI091208A
+%state.acq.mirrorDataOutput(:,2) = (c*scaledMirrorDataOutput(:,2) - s*scaledMirrorDataOutput(:,1)) + (state.acq.scanShiftSlow * state.init.voltsPerOpticalDegree); %VI110310A %VI092010A %VI091208A
+for dim = 1:3 %AS
+    state.acq.mirrorDataOutput(:,dim) = scaledMirrorDataOutput(:,1)*RM(1,dim) + scaledMirrorDataOutput(:,2)*RM(2,dim) + scaledMirrorDataOutput(:,3)*RM(3,dim);
+end
+%state.acq.mirrorDataOutput(:,3) = state.acq.mirrorDataOutput(:,3)*state.init.voltageXZScaleFactor; %AS TODO
 
 %%%VI092010A%%%%%%
-%Input order is [fast slow], output order is [x y]
-if ~state.acq.fastScanningX
-    state.acq.mirrorDataOutput = fliplr(state.acq.mirrorDataOutput); %Input order is [fast slow], output order is [x y]
-end
+% %Input order is [fast slow], output order is [x y] %AS commented; this
+% doesn't make sense any more in 3D
+% if ~state.acq.fastScanningX
+%     state.acq.mirrorDataOutput = fliplr(state.acq.mirrorDataOutput); %Input order is [fast slow], output order is [x y]
+% end
 %state.acq.mirrorDataOutput = state.acq.mirrorDataOutput + repmat([state.init.scanOffsetAngleX state.init.scanOffsetAngleY] * state.init.voltsPerOpticalDegree,length(state.acq.mirrorDataOutput),1); %VI110310B %VI110310A %VI110210A
 state.acq.mirrorDataOutput(:,1) = state.acq.mirrorDataOutput(:,1) + state.init.scanOffsetAngleX * state.init.voltsPerOpticalDegree; %VI110310C %VI110310A
 state.acq.mirrorDataOutput(:,2) = state.acq.mirrorDataOutput(:,2) + state.init.scanOffsetAngleY * state.init.voltsPerOpticalDegree; %VI110310C %VI110310A
