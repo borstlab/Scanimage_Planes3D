@@ -2031,20 +2031,20 @@ updatePlot()
 function updatePlot() %AS
 
 global state
-
-if strcmp(state.internal.lastStartMode, 'focus') && strcmp(state.internal.statusString,'Focusing...')
-    %colormap(copper)
-    %tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
-    %trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'EdgeColor','None');
-    plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),state.acq.mirrorDataOutput(:,3),'k.');
+XYZScaleFactor = state.init.voltsPerMicronZ/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree); %AS ev write to state
+    
+if strcmp(state.internal.statusString,'Focusing...')
+    
+    plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
     disp('Focusing, plotting mirrorDataOutput')
     
 else
+    
     linTransformMirrorData();
-    %colormap(copper)
-    tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
-    trisurf(tri,state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),state.acq.mirrorDataOutput(:,3),'EdgeColor','None');
-    %plot3(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2),zeros(size(state.acq.mirrorDataOutput(:,1))),'k.'); 
+%     tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
+%     trisurf(tri,state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'EdgeColor','None');
+    plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
+    
     disp('Not focusing, plotting a linTranformed plane with current parameters')
 end
 
