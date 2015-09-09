@@ -100,7 +100,7 @@ classdef Channel < dabs.ni.daqmx.private.DAQmxClass
                     chanNames = cell(1,numDevices);
                 elseif ischar(chanNames)  %Shared channel name to be given to each channel (with additional distingushing info appended)
                     chanNames = repmat({chanNames},1,numDevices); %Repeat same value for each of the devices
-                elseif iscell(chanNames) && ~iscellstr(chanNames) && isvector(chanNames) && length(chanNames) == numDevices
+                elseif iscell(chanNames) && iscellstr(chanNames) && isvector(chanNames) && length(chanNames) == numDevices %AS removed ~ before iscellstr
                     for i=1:length(chanNames)
                         if ~isValidChanNamesArg(chanNames{i})
                             MException(msgID,msg)
