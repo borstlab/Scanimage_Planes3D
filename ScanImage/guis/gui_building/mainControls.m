@@ -259,7 +259,7 @@ function scanRotationSlider_Callback(hObject, eventdata, handles)
 updateScanParameter(hObject);
 % axes(handles.axes1); %AS
 % cla; %AS
-updatePlot() %AS
+%updatePlot() %AS
 
 % --- Executes on button press in pbRoot.
 function pbRoot_Callback(hObject, eventdata, handles)
@@ -330,12 +330,12 @@ updatePlot() %AS
 % --------------------------------------------------------------------
 function varargout = scanShiftSlow_Callback(h, eventdata, handles, varargin)
 updateScanParameter(h);
-updatePlot() %AS
+%updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = scanShiftFast_Callback(h, eventdata, handles, varargin)
 updateScanParameter(h);
-updatePlot() %AS
+%updatePlot() %AS
 
 
 % --------------------------------------------------------------------
@@ -349,7 +349,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftFast');
 setScanProps(h);
 updateRSPs();
-updatePlot() %AS
+%updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = left_Callback(h, eventdata, handles, varargin)
@@ -362,7 +362,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftFast');
 setScanProps(h);
 updateRSPs();
-updatePlot() %AS
+%updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = down_Callback(h, eventdata, handles, varargin)
@@ -375,7 +375,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftSlow');
 setScanProps(h);
 updateRSPs();
-updatePlot() %AS
+%updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = up_Callback(h, eventdata, handles, varargin)
@@ -388,7 +388,7 @@ end
 updateGUIByGlobal('state.acq.scanShiftSlow');
 setScanProps(h);
 updateRSPs();
-updatePlot() %AS
+%updatePlot() %AS
 
 % --------------------------------------------------------------------
 function varargout = zero_Callback(h, eventdata, handles, varargin)
@@ -399,7 +399,7 @@ state.acq.scanShiftFast = 0;
 updateGUIByGlobal('state.acq.scanShiftFast');
 setScanProps(h);
 updateRSPs();
-updatePlot() %AS
+%updatePlot() %AS
 
 % % --------------------------------------------------------------------
 % function done = drawROISI(handle)
@@ -653,7 +653,7 @@ setZoomValue(str2num([num2str(round(state.acq.zoomhundreds))...
 
 %Effect the change on the scan parameters
 setScanProps(h);
-updatePlot() %AS
+%updatePlot() %AS
 
 % % --------------------------------------------------------------------
 % function varargout = shutterDelay_Callback(h, eventdata, handles, varargin)
@@ -762,7 +762,7 @@ if all(strcmpi(get(buttonHandles, 'Visible'), 'on'))
     if done
         setScanProps(h);
         snapShot(1);
-        updatePlot() %AS
+        %updatePlot() %AS
     end
 else
     beep;
@@ -833,7 +833,7 @@ updateGUIByGlobal('state.acq.scanRotation');
 setScanProps(h);
 
 updateRSPs();
-updatePlot() %AS
+%updatePlot() %AS
 return;
 
 % % --------------------------------------------------------------------
@@ -1134,7 +1134,7 @@ function etScanAngleMultiplierFast_Callback(hObject, eventdata, handles)
 updateScanParameter(hObject);
 %updateScanAmplitude();
 %applyConfigurationSettings();
-updatePlot() %AS
+%updatePlot() %AS
 
 function etScanAngleMultiplierSlow_Callback(hObject, eventdata, handles)
 % hObject    handle to etScanAngleMultiplierSlow (see GCBO)
@@ -1146,7 +1146,7 @@ function etScanAngleMultiplierSlow_Callback(hObject, eventdata, handles)
 updateScanParameter(hObject);
 %updateScanAmplitude();
 %applyConfigurationSettings();
-updatePlot() %AS
+%updatePlot() %AS
 
 % % disable LS mode, if necessary
 % global state
@@ -2006,7 +2006,7 @@ function XRotation_Callback(hObject, eventdata, handles) %AS
 
 % Hints: get(hObject,'String') returns contents of XRotation as text
 %        str2double(get(hObject,'String')) returns contents of XRotation as a double
-updatePlot()
+%updatePlot()
 updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties. 
@@ -2035,7 +2035,12 @@ XYZScaleFactor = state.init.voltsPerMicronZ/(state.init.OpticalDegreesperMicronX
     
 if strcmp(state.internal.statusString,'Focusing...')
     
-    plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
+    %plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
+    scatter(state.acq.mirrorDataOutput(1:50:end,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), state.acq.mirrorDataOutput(1:50:end,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), 50, state.acq.mirrorDataOutput(1:50:end,3)/state.init.voltsPerMicronZ, '.')
+    colorbar
+    colormap('copper')
+    axis equal  
+    grid on
     disp('Focusing, plotting mirrorDataOutput')
     
 else
@@ -2043,8 +2048,12 @@ else
     linTransformMirrorData();
 %     tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
 %     trisurf(tri,state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'EdgeColor','None');
-    plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
-    
+    %plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
+    scatter(state.acq.mirrorDataOutput(1:50:end,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), state.acq.mirrorDataOutput(1:50:end,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), 50, state.acq.mirrorDataOutput(1:50:end,3)/state.init.voltsPerMicronZ, '.')
+    colorbar
+    colormap('copper')
+    axis equal  
+    grid on
     disp('Not focusing, plotting a linTranformed plane with current parameters')
 end
 
@@ -2058,7 +2067,7 @@ function YRotation_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of YRotation as text
 %        str2double(get(hObject,'String')) returns contents of YRotation as a double
-updatePlot()
+%updatePlot()
 updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties.
@@ -2080,7 +2089,7 @@ function XRotationSlider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-updatePlot()
+%updatePlot()
 updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties.
@@ -2102,7 +2111,7 @@ function YRotationSlider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-updatePlot()
+%updatePlot()
 updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties.
@@ -2123,7 +2132,7 @@ function ZAbsoluteSlider_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-updatePlot()
+%updatePlot()
 updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties.
@@ -2145,7 +2154,7 @@ function ZAbsolute_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of ZAbsolute as text
 %        str2double(get(hObject,'String')) returns contents of ZAbsolute as a double
-updatePlot()
+%updatePlot()
 updateScanParameter(hObject);
 
 % --- Executes during object creation, after setting all properties.
