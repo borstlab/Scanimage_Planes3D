@@ -89,7 +89,7 @@ RM_y = [cos(y_angle) 0 sin(y_angle); 0 1 0; -sin(y_angle) 0 cos(y_angle)]; %AS
 RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1]; %AS
 RM = RM_x*RM_y*RM_z;  %AS
 orth_v = [0 0 1]*RM; %AS
-%center_p = [0 0 0] + [0 0 state.acq.ZAbsolute*state.init.voltsPerMicronZ] + orth_v*z_rel; %AS TODO 
+center_p = [0 0 0] + [0 0 state.acq.ZAbsolute*state.init.voltsPerMicronZ] + orth_v*state.acq.ZRelative*state.init.voltsPerMicronZ; %AS TODO 
 
 %a = 1:lengthofframedata;
 % finalMirrorDataOutput(a,1)=finalMirrorDataOutput(a,1);
@@ -100,6 +100,9 @@ state.acq.mirrorDataOutput = zeros(lengthofframedata,3); %VI010809A %AS 3 instea
 for dim = 1:3 %AS
     state.acq.mirrorDataOutput(:,dim) = scaledMirrorDataOutput(:,1)*RM(1,dim) + scaledMirrorDataOutput(:,2)*RM(2,dim) + scaledMirrorDataOutput(:,3)*RM(3,dim);
 end
+
+state.acq.mirrorDataOutput = state.acq.mirrorDataOutput + repmat(center_p,size(state.acq.mirrorDataOutput,1),1);
+
 XYZScaleFactor = state.init.voltsPerMicronZ/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree); %AS ev write to state
 state.acq.mirrorDataOutput(:,3) = state.acq.mirrorDataOutput(:,3)*XYZScaleFactor; %AS 
 

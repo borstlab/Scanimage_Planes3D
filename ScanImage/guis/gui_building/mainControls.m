@@ -22,7 +22,7 @@ function varargout = mainControls(varargin)
 
 % Edit the above text to modify the response to help mainControls
 
-% Last Modified by GUIDE v2.5 29-May-2015 10:56:23
+% Last Modified by GUIDE v2.5 17-Sep-2015 17:36:56
 
 %% CHANGES
 % VI041308A: Disallow external triggering for multi-slice acquisitions -- Vijay Iyer 4/13/2008
@@ -2036,7 +2036,7 @@ XYZScaleFactor = state.init.voltsPerMicronZ/(state.init.OpticalDegreesperMicronX
 if strcmp(state.internal.statusString,'Focusing...')
     
     %plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
-    scatter(state.acq.mirrorDataOutput(1:50:end,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), state.acq.mirrorDataOutput(1:50:end,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), 50, state.acq.mirrorDataOutput(1:50:end,3)/state.init.voltsPerMicronZ, '.')
+    scatter(state.acq.mirrorDataOutput(1:50:end,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), state.acq.mirrorDataOutput(1:50:end,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), 50, state.acq.mirrorDataOutput(1:50:end,3)/(state.init.voltsPerMicronZ*XYZScaleFactor), '.')
     colorbar
     colormap('copper')
     axis equal  
@@ -2049,7 +2049,7 @@ else
 %     tri = delaunay(state.acq.mirrorDataOutput(:,1),state.acq.mirrorDataOutput(:,2));
 %     trisurf(tri,state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'EdgeColor','None');
     %plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
-    scatter(state.acq.mirrorDataOutput(1:50:end,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), state.acq.mirrorDataOutput(1:50:end,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), 50, state.acq.mirrorDataOutput(1:50:end,3)/state.init.voltsPerMicronZ, '.')
+    scatter(state.acq.mirrorDataOutput(1:50:end,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), state.acq.mirrorDataOutput(1:50:end,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree), 50, state.acq.mirrorDataOutput(1:50:end,3)/(state.init.voltsPerMicronZ*XYZScaleFactor), '.')
     colorbar
     colormap('copper')
     axis equal  
@@ -2160,6 +2160,49 @@ updateScanParameter(hObject);
 % --- Executes during object creation, after setting all properties.
 function ZAbsolute_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ZAbsolute (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+
+% --- Executes on slider movement.
+function ZRelativeSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to ZRelativeSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function ZRelativeSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ZRelativeSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+
+
+function ZRelative_Callback(hObject, eventdata, handles)
+% hObject    handle to ZRelative (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of ZRelative as text
+%        str2double(get(hObject,'String')) returns contents of ZRelative as a double
+updateScanParameter(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function ZRelative_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ZRelative (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
