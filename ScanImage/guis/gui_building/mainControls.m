@@ -2032,7 +2032,7 @@ function updatePlot() %AS
 
 global state
 XYZScaleFactor = state.init.voltsPerMicronZ/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree); %AS ev write to state
-    
+
 if strcmp(state.internal.statusString,'Focusing...')
     
     %plot3(state.acq.mirrorDataOutput(:,1)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,2)/(state.init.OpticalDegreesperMicronXY*state.init.voltsPerOpticalDegree),state.acq.mirrorDataOutput(:,3)/state.init.voltsPerMicronZ,'k.');
