@@ -91,7 +91,7 @@ RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1]; %AS
 RM = RM_x*RM_y*RM_z;  %AS
 orth_v = [0 0 1]*RM; %AS
 center_p = [0 0 0] + [0 0 state.acq.ZAbsolute*state.init.voltsPerMicronZ] + orth_v*state.acq.ZRelative.*[voltsPerMicronXY voltsPerMicronXY state.init.voltsPerMicronZ]; %AS  
-center_p = center_p + [state.acq.scanShiftFast*state.init.voltsPerOpticalDegree, state.acq.scanShiftSlow*state.init.voltsPerOpticalDegree,0];
+center_p = center_p - [state.acq.scanShiftFast*state.init.voltsPerOpticalDegree, state.acq.scanShiftSlow*state.init.voltsPerOpticalDegree,0];
 
 %a = 1:lengthofframedata;
 % finalMirrorDataOutput(a,1)=finalMirrorDataOutput(a,1);
