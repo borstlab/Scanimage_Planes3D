@@ -2041,6 +2041,7 @@ if strcmp(state.internal.statusString,'Focusing...')
     colormap('copper')
     axis equal  
     grid on
+    set(gca, 'Ydir', 'reverse')
     disp('Focusing, plotting mirrorDataOutput')
     
 else
@@ -2054,6 +2055,7 @@ else
     colormap('copper')
     axis equal  
     grid on
+    set(gca, 'Ydir', 'reverse')
     disp('Not focusing, plotting a linTranformed plane with current parameters')
 end
 

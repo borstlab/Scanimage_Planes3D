@@ -19,8 +19,8 @@ structure state
       lowPixelValue4=0
       figureWidth1=731
       figureHeight1=752
-      figurePositionX1=900
-      figurePositionY1=150
+      figurePositionX1=1148
+      figurePositionY1=16
       figureColormap1='$scim_colorMap(''gray'',8,5)'
       figureWidth2=265
       figureHeight2=265
@@ -63,7 +63,7 @@ structure state
       imageControlsBottom=5.76923076923077
       imageControlsLeft=62.4
       imageControlsVisible='off'
-      channelGUIBottom=73.0769230769231
+      channelGUIBottom=73.1538461538462
       channelGUILeft=137.4
       channelGUIVisible='on'
       motorControlsBottom=35.8461538461538
@@ -72,8 +72,8 @@ structure state
       cycleGUIBottom=39.3076923076923
       cycleGUILeft=103.8
       cycleGUIVisible='off'
-      mainControlsBottom=58.3076923076923
-      mainControlsLeft=28.8
+      mainControlsBottom=68
+      mainControlsLeft=14.2
       mainControlsVisible='on'
       videoControlsGUIBottom=[]
       videoControlsGUILeft=[]
