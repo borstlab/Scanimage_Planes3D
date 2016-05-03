@@ -63,7 +63,7 @@ structure state
       imageControlsBottom=5.76923076923077
       imageControlsLeft=62.4
       imageControlsVisible='off'
-      channelGUIBottom=73.1538461538462
+      channelGUIBottom=73.2307692307692
       channelGUILeft=137.4
       channelGUIVisible='on'
       motorControlsBottom=35.8461538461538
@@ -95,8 +95,8 @@ structure state
       powerTransitionsVisible='off'
       powerBoxBottom=47.5384615384615
       powerBoxLeft=103.8
-      configurationControlsBottom=2.53846153846154
-      configurationControlsLeft=140
+      configurationControlsBottom=74.3076923076923
+      configurationControlsLeft=147.8
       alignGUIBottom=29.2307692307692
       alignGUILeft=103.8
       fastConfigurationGUIBottom=48.8461538461538
@@ -161,8 +161,8 @@ structure state
    endstructure
    structure shutter
    endstructure
-   configPath='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage'
-   configName='anna'
+   configPath='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage\'
+   configName='hires'
    structure software
    endstructure
    structure acq
@@ -196,13 +196,13 @@ structure state
       UserFcnPath=''
    endstructure
    structure files
-      fastConfig1=''
-      fastConfig2=''
+      fastConfig1='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage\anna.cfg'
+      fastConfig2='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage\hires.cfg'
       fastConfig3=''
       fastConfig4=''
       fastConfig5=''
       fastConfig6=''
-      lastFastConfigPath=''
+      lastFastConfigPath='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage\'
       fastConfigAutoStartArray='[0 0 0 0 0 0]'
       fastConfigAutoStartTypeArray='{GRAB| GRAB| GRAB| GRAB| GRAB| GRAB| }'
       rootSavePath=''
