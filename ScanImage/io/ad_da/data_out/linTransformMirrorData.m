@@ -129,8 +129,10 @@ state.acq.mirrorDataOutput(:,2) = state.acq.mirrorDataOutput(:,2) + state.init.s
 for i=1:size(state.acq.mirrorDataOutput,2)
     
     warnMsg = false;
+    warnMsgZ = false;
     minLimit = -state.init.outputVoltageRange;
     maxLimit = state.init.outputVoltageRange;
+    maxLimitZ = state.acq.ZOutputMaxVoltage;
 
     if min(state.acq.mirrorDataOutput(:,i)) < minLimit
        warnMsg = true;
@@ -142,10 +144,19 @@ for i=1:size(state.acq.mirrorDataOutput,2)
        state.acq.mirrorDataOutput(state.acq.mirrorDataOutput(:,i) > maxLimit,i) = maxLimit;
     end
        
-       
+    if i==3 & max(state.acq.mirrorDataOutput(:,i)) > maxLimitZ
+        warnMsgZ = true;
+        state.acq.mirrorDataOutput(state.acq.mirrorDataOutput(:,i) > maxLimitZ,i) = maxLimitZ;
+    end
+    
     if warnMsg
         fprintf(2,'WARNING: Computed mirror output signal exceeds configured output range of Analog Output board. Command signal has been clipped.\n');
     end
+    
+    if warnMsgZ
+        fprintf(2, 'WARNING: Computed Z mirror output signal exceeds closest save position of piezo. Command signal has been clipped.\n');
+    end 
+    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 

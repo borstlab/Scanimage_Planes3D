@@ -22,7 +22,7 @@ function varargout = mainControls(varargin)
 
 % Edit the above text to modify the response to help mainControls
 
-% Last Modified by GUIDE v2.5 02-May-2016 16:49:23
+% Last Modified by GUIDE v2.5 13-May-2016 14:28:27
 
 %% CHANGES
 % VI041308A: Disallow external triggering for multi-slice acquisitions -- Vijay Iyer 4/13/2008
@@ -2310,3 +2310,26 @@ function XRelative_CreateFcn(hObject, eventdata, handles)
 %     set(hObject,'BackgroundColor','white');
 % end
 generic_CreateFcn(hObject,eventdata,handles,'white');
+
+
+
+function ZOutputMaxVoltage_Callback(hObject, eventdata, handles)
+% hObject    handle to ZOutputMaxVoltage (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of ZOutputMaxVoltage as text
+%        str2double(get(hObject,'String')) returns contents of ZOutputMaxVoltage as a double
+updateScanParameter(hObject);
+
+
+% --- Executes during object creation, after setting all properties.
+function ZOutputMaxVoltage_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ZOutputMaxVoltage (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+generic_CreateFcn(hObject,eventdata,handles,'white');
+
