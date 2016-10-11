@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <DEVTOOLSPATH>C:\Program Files\ScanImage\DEVTOOLS</DEVTOOLSPATH>
+    <DEV3P>$(DEVTOOLSPATH)\ThirdParties</DEV3P>
+    <MATLABVER>R2014a</MATLABVER>
+    <NIDAQVERFOLDER>NIDAQmx_$(NIDAQVER)</NIDAQVERFOLDER>
+    <NIDAQVER>9_3_x</NIDAQVER>
+    <NIFPGAVER>13_0</NIFPGAVER>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <ShowProgress>NotSet</ShowProgress>
+      <OutputFile />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="DEVTOOLSPATH">
+      <Value>$(DEVTOOLSPATH)</Value>
+    </BuildMacro>
+    <BuildMacro Include="DEV3P">
+      <Value>$(DEV3P)</Value>
+    </BuildMacro>
+    <BuildMacro Include="MATLABVER">
+      <Value>$(MATLABVER)</Value>
+    </BuildMacro>
+    <BuildMacro Include="NIDAQVERFOLDER">
+      <Value>$(NIDAQVERFOLDER)</Value>
+    </BuildMacro>
+    <BuildMacro Include="NIDAQVER">
+      <Value>$(NIDAQVER)</Value>
+    </BuildMacro>
+    <BuildMacro Include="NIFPGAVER">
+      <Value>$(NIFPGAVER)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

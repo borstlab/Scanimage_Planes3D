@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <PLATFORM_DEFAULT_DIR>x64</PLATFORM_DEFAULT_DIR>
+    <PLATFORM_MATLAB_MEX_EXT>mexw64</PLATFORM_MATLAB_MEX_EXT>
+    <PLATFORM_MATLAB_LIB_DIR>win64</PLATFORM_MATLAB_LIB_DIR>
+    <PLATFORM_NIDAQ_LIB_DIR>lib64</PLATFORM_NIDAQ_LIB_DIR>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
+    <_PropertySheetDisplayName>PLATFORM WIN64</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="PLATFORM_DEFAULT_DIR">
+      <Value>$(PLATFORM_DEFAULT_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="PLATFORM_MATLAB_MEX_EXT">
+      <Value>$(PLATFORM_MATLAB_MEX_EXT)</Value>
+    </BuildMacro>
+    <BuildMacro Include="PLATFORM_MATLAB_LIB_DIR">
+      <Value>$(PLATFORM_MATLAB_LIB_DIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="PLATFORM_NIDAQ_LIB_DIR">
+      <Value>$(PLATFORM_NIDAQ_LIB_DIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
