@@ -88,8 +88,7 @@ end
 for j=1:state.init.maximumNumberOfInputChannels %VI031110A: Was 'max', now 'min'. Never matters in practice. % DEQ20110125 - 'min' logic moved to line 47
     if ~ismember(j-1,state.init.primaryBoardPhotodiodeChans)
         voltageRange = state.acq.(['inputVoltageRange' num2str(j)]);
-        %hChan =
-        %state.init.hAI.createAIVoltageChan(state.init.acquisitionBoardID,j-1,['Imaging-' num2str(j-1)],-voltageRange,voltageRange); %#ok<SETNU> 
+        %hChan = state.init.hAI.createAIVoltageChan(state.init.acquisitionBoardID,j-1,['Imaging-' num2str(j-1)],-voltageRange,voltageRange); %#ok<SETNU> 
         hChan = state.init.hAI.createAIVoltageChan(state.init.acquisitionBoardID,j-1,['Imaging-' num2str(j-1)],-voltageRange,voltageRange,[],[],'DAQmx_Val_RSE'); %#ok<SETNU>     % ASadded, line above ASrmd
         eval(['state.init.inputChannel' num2str(j) ' = hChan;']);
     end

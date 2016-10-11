@@ -45,9 +45,8 @@ actualInputRate = state.init.hAI.sampClkRate;
 state.internal.samplesPerLine = round(actualInputRate * 1e-3 * state.acq.msPerLine); 
 state.internal.samplesPerFrame = state.internal.samplesPerLine * state.acq.linesPerFrame;
 state.internal.samplesPerStripe = state.internal.samplesPerLine * state.acq.linesPerFrame / state.internal.numberOfStripes;
-
 %Determine everyNSamples and buffering values
-everyNSamples = state.internal.samplesPerFrame / state.internal.numberOfStripes;
+everyNSamples = state.internal.samplesPerFrame / state.internal.numberOfStripes - 0; % - 6 for 1.48 frame rate - AS messing with syncing
 if ~state.internal.fastRestart || everyNSamples ~= state.init.hAI.everyNSamples %VI022811A % AL120210A %NOTE: Might need to add state.cycle.cycling here as well as another case to exclude -- Vijay Iyer 1/6/11
     state.init.hAI.everyNSamples = []; %VI091309A  
     state.init.hAI.cfgInputBufferVerify(computeBufferNumSamples(actualInputRate,everyNSamples), 2*everyNSamples); 
@@ -91,7 +90,7 @@ else
 
         state.internal.numberOfStripes = state.acq.linesPerFrame / possibleLinesPerStripe(idx);
     end
-
+    %state.internal.numberOfStripes = 1; %AS added, messing around
 end
 
 %%%VI091090A: Removed %%%%%%%%

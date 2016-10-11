@@ -11,21 +11,21 @@ structure state
       colormapSaturationFraction=0.05
       highPixelValue1=500
       lowPixelValue1=0
-      highPixelValue2=500
-      lowPixelValue2=0
+      highPixelValue2=6274.7264
+      lowPixelValue2=3311.4587
       highPixelValue3=500
       lowPixelValue3=0
       highPixelValue4=500
       lowPixelValue4=0
       figureWidth1=731
       figureHeight1=752
-      figurePositionX1=1148
-      figurePositionY1=16
+      figurePositionX1=539
+      figurePositionY1=61
       figureColormap1='$scim_colorMap(''gray'',8,5)'
       figureWidth2=265
       figureHeight2=265
-      figurePositionX2=963
-      figurePositionY2=611
+      figurePositionX2=1277
+      figurePositionY2=549
       figureColormap2='$scim_colorMap(''gray'',8,5)'
       figureWidth3=265
       figureHeight3=265
@@ -60,11 +60,11 @@ structure state
       roiDisplayGUIBottom=30.9230769230769
       roiDisplayGUILeft=168.4
       roiDisplayGUIVisible='off'
-      imageControlsBottom=5.76923076923077
-      imageControlsLeft=62.4
+      imageControlsBottom=22.3076923076923
+      imageControlsLeft=72.8
       imageControlsVisible='off'
-      channelGUIBottom=73.2307692307692
-      channelGUILeft=137.4
+      channelGUIBottom=68
+      channelGUILeft=160.8
       channelGUIVisible='on'
       motorControlsBottom=35.8461538461538
       motorControlsLeft=28
@@ -72,8 +72,8 @@ structure state
       cycleGUIBottom=39.3076923076923
       cycleGUILeft=103.8
       cycleGUIVisible='off'
-      mainControlsBottom=68
-      mainControlsLeft=14.2
+      mainControlsBottom=64
+      mainControlsLeft=22.2
       mainControlsVisible='on'
       videoControlsGUIBottom=[]
       videoControlsGUILeft=[]
@@ -95,7 +95,7 @@ structure state
       powerTransitionsVisible='off'
       powerBoxBottom=47.5384615384615
       powerBoxLeft=103.8
-      configurationControlsBottom=74.3076923076923
+      configurationControlsBottom=57.3076923076923
       configurationControlsLeft=147.8
       alignGUIBottom=29.2307692307692
       alignGUILeft=103.8
@@ -161,13 +161,13 @@ structure state
    endstructure
    structure shutter
    endstructure
-   configPath='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage\'
-   configName='hires'
+   configPath='C:\Program Files\SCANIMAGE_r3.8\Config\ScanImage'
+   configName='anna'
    structure software
    endstructure
    structure acq
       externalTriggerTimeout=Inf
-      infiniteFocus=0
+      infiniteFocus=1
       numAvgFramesDisplay=1
       lockAvgFrames=0
       numberOfFramesSnap=1

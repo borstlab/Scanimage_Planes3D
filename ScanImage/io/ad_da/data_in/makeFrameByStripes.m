@@ -120,6 +120,11 @@ try
 % getTime = toc;
 
   
+%     if length(frameFinalData) < state.internal.samplesPerLine * state.acq.linesPerFrame %AS messing start
+%         frameFinalData(state.internal.samplesPerLine * state.acq.linesPerFrame,:) = 0;  %AS added : to actually pad because the thing is 2d)
+%         fprintf(2, 'Padding stripe data from %s to %s with NULL values to syn. Temporary solution!\n', ...
+%                 num2str(length(frameFinalData) + 1), num2str(state.internal.samplesPerLine * state.acq.linesPerFrame)); 
+%     end %% AS messing end
 
 
     %%%Handle case where acquired data wraps beyond line period 'boundary'

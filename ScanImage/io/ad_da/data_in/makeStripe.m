@@ -139,18 +139,18 @@ try
         set(gh.configurationControls.etAcqDelay,'BackgroundColor',[1 1 1]); %VI102409A
     end
     %wrapFixTime = toc;
-    
+
     if length(stripeFinalData) < state.internal.samplesPerLine * state.acq.linesPerFrame / state.internal.numberOfStripes %VI090609B
         fprintf(2, 'WARNING: Data acquisition underrun. Expected to acquire %s samples, only found %s samples in the buffer.', ...
             num2str(state.internal.samplesPerLine * state.acq.linesPerFrame / state.internal.numberOfStripes), ... %VI090609B
             num2str(length(stripeFinalData)));
         if state.internal.compensateForBufferUnderruns
-            stripeFinalData(state.internal.samplesPerLine * state.acq.linesPerFrame / state.internal.numberOfStripes) = 0; %VI090609B
+            stripeFinalData(state.internal.samplesPerLine * state.acq.linesPerFrame / state.internal.numberOfStripes,:) = 0; %VI090609B  %AS added : to actually pad because the thing is 2d)
             fprintf(2, 'Padding stripe data from %s to %s with NULL values. Image should be considered corrupted.\n         To disable this behavior, set state.internal.compensateForBufferUnderruns equal to 0.\n', ...
                 num2str(length(stripeFinalData) + 1), num2str(state.internal.samplesPerLine * state.acq.linesPerFrame / state.internal.numberOfStripes)); %VI090609B
         end
     end
-    
+
     %%%VI102209A: Discard last line if indicated %%%%%%
     discardLineAfterReshape = false;
     discardLastLine =  state.acq.slowDimDiscardFlybackLine && (state.internal.stripeCounter + 1) == state.internal.numberOfStripes; %VI102810B
