@@ -8,6 +8,7 @@ classdef RoiManager < scanimage.interfaces.Component
         
         scanZoomFactor = 1;             % [1] defaultROI only: value of zoom. Constraint: zoomFactor >= 1
         scanRotation   = 0;             % [degrees] defaultROI only: rotation counter clockwise about the Z-axis of the scanned area or line
+        scanRotationX  = 0;             % [degrees] defaultROI only: rotation counter clockwise (?) about the X-axis of the scanned area or line
         scanAngleMultiplierSlow = 1;    % [1] defaultROI only: scale slow output
         scanAngleMultiplierFast = 1;    % [1] defaultROI only: scale fast scanner output
         scanAngleShiftSlow = 0;         % [1] defaultROI only: shift slow scanner output (in FOV coordinates)
@@ -71,7 +72,7 @@ classdef RoiManager < scanimage.interfaces.Component
         COMPONENT_NAME = 'RoiGroup';                        % [char array] short name describing functionality of component e.g. 'Beams' or 'FastZ'
         PROP_TRUE_LIVE_UPDATE = {};                         % Cell array of strings specifying properties that can be set while the component is active
         PROP_FOCUS_TRUE_LIVE_UPDATE = {...                  % Cell array of strings specifying properties that can be set while focusing
-            'scanZoomFactor','scanRotation','scanAngleMultiplierSlow',...
+            'scanZoomFactor','scanRotation','scanRotationX','scanAngleMultiplierSlow',...
             'scanAngleMultiplierFast','scanAngleShiftSlow','scanAngleShiftFast'};
         DENY_PROP_LIVE_UPDATE = {};                         % Cell array of strings specifying properties for which a live update is denied (during acqState = Focus)
         
@@ -186,6 +187,7 @@ classdef RoiManager < scanimage.interfaces.Component
             % replace existing roi in default roi group with new roi
             obj.roiGroupDefault_.rois(1).scanfields(1).rect = rect;
             obj.roiGroupDefault_.rois(1).scanfields(1).degrees = obj.scanRotation;
+            obj.roiGroupDefault_.rois(1).scanfields(1).degreesX = obj.scanRotationX;
             obj.roiGroupDefault_.rois(1).scanfields(1).pixelResolution = [obj.pixelsPerLine, obj.linesPerFrame];
             
             val = obj.roiGroupDefault_;
@@ -378,6 +380,27 @@ classdef RoiManager < scanimage.interfaces.Component
             end
         end
         
+        function set.scanRotationX(obj,val)
+            val = obj.validatePropArg('scanRotationX',val);
+            if obj.componentUpdateProperty('scanRotationX',val)
+                obj.scanRotationX = val;
+                
+                obj.coerceDefaultRoi();
+                
+                %Side effects
+                if ~obj.mroiEnable
+                    obj.clearRoiGroupScannerCoordCache();
+                    if obj.hSI.active && ~obj.preventLiveUpdate
+                        obj.hSI.hScan2D.updateLiveValues();
+                        
+                        if obj.hSI.hDisplay.forceRoiDisplayTransform
+                            obj.hSI.hDisplay.resetActiveDisplayFigs(true);
+                        end
+                    end
+                end
+            end
+        end
+        
         function set.scanZoomFactor(obj,val)
             val = obj.validatePropArg('scanZoomFactor',val);
             if obj.componentUpdateProperty('scanZoomFactor',val)
@@ -464,6 +487,7 @@ classdef RoiManager < scanimage.interfaces.Component
                     end
                     if ~obj.hSI.hScan2D.supportsRoiRotation
                         obj.scanRotation = 0;
+                        obj.scanRotationX = 0;
                     end
                     
                     obj.preventLiveUpdate = false;
@@ -546,6 +570,7 @@ s.pixelsPerLine             = struct('Classes','numeric','Attributes',{{'integer
 s.linesPerFrame             = struct('Classes','numeric','Attributes',{{'integer','positive','finite','scalar'}});
 s.scanZoomFactor            = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',1}});
 s.scanRotation              = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
+s.scanRotationX              = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.scanAngleMultiplierSlow   = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',0,'<=',1}});
 s.scanAngleMultiplierFast   = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',0,'<=',1}});
 s.forceSquarePixelation     = struct('Classes','binaryflex','Attributes',{{'scalar'}});

@@ -7,6 +7,7 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
     %% Public properties
     properties (SetObservable) 
         degrees   % The obj.rect rectangle will be rotated about it's center by 'degree' degrees
+        degreesX
     end
     
     %% Abstract methods realization scanimage.mroi.scanfield.ScanField

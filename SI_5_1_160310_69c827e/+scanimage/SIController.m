@@ -2803,6 +2803,11 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
         function zeroScanRotation(obj,src)
             obj.hModel.hRoiManager.scanRotation = 0;
         end
+        
+        function changeScanRotationX(obj,src,inc)
+            obj.hModel.hRoiManager.scanRotationX = obj.hModel.hRoiManager.scanRotationX + inc;
+        end
+        
     end
     
     %% INTERNAL METHODS
@@ -2966,6 +2971,7 @@ function s = lclInitPropBindings(hModel)
     s.hRoiManager.scanFrameRate            = struct('GuiIDs',{{'configControlsV4','etFrameRate'}},'ViewPrecision','%.2f');
     s.hRoiManager.linePeriod               = struct('GuiIDs',{{'configControlsV4','etLinePeriod'}},'ViewScaling',1e6,'ViewPrecision','%.2f');
     s.hRoiManager.scanRotation             = struct('GuiIDs',{{'mainControlsV4','scanRotation'}});
+    s.hRoiManager.scanRotationX             = struct('GuiIDs',{{'mainControlsV4','scanRotationX'}});
     s.hRoiManager.scanZoomFactor           = struct('GuiIDs',{{'mainControlsV4' 'pcZoom'}});
     s.hRoiManager.scanVolumeRate           = struct('GuiIDs',{{'fastZControlsV4', 'etVolumeRate'}},'ViewPrecision','%.2f');
     s.hRoiManager.mroiEnable               = struct('GuiIDs',{{'mainControlsV4', 'cbEnableMroi'}},'Callback','updateFrameBatchOptions');

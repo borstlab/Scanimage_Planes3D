@@ -44,7 +44,7 @@ beamDaqs(1).calOpenShutterIDs = [];             % Array of shutter IDs that must
 
 %% LinScan (LinScanner)
 deviceNameAcq   = 'Dev4';      % string identifying NI DAQ board for PMT channels input
-deviceNameGalvo = 'Dev4';      % string identifying NI DAQ board for controlling X/Y galvo. leave empty if same as deviceNameAcq
+deviceNameGalvo = 'Dev3';      % string identifying NI DAQ board for controlling X/Y galvo. leave empty if same as deviceNameAcq
 deviceNameAux   = 'Dev3';      % string identifying NI DAQ board for outputting clocks. leave empty if unused. Must be a X-series board
 
 %Optional
@@ -59,6 +59,7 @@ enableRefClkOutput = false;         % Enables/disables the export of the 10MHz r
 %Scanner control
 XMirrorChannelID = 0;               % The numeric ID of the Analog Output channel to be used to control the X Galvo.
 YMirrorChannelID = 1;               % The numeric ID of the Analog Output channel to be used to control the y Galvo.
+ZMirrorChannelID = 2;               % The numeric ID of the Analog Output channel to be used to control the z piezo.
 
 xGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for x galvo
 yGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for y galvo
@@ -105,20 +106,20 @@ moveCompleteDelay = 0;              % Numeric [s]: Delay from when stage control
 %FastZ hardware used for fast axial motion, supporting fast stacks and/or volume imaging
 %fastZControllerType must be specified to enable this feature. 
 %Specifying fastZControllerType='useMotor2' indicates that motor2 ControllerType/StageType/COMPort/etc will be used.
-fastZControllerType = 'analog';           % If supplied, one of {'useMotor2', 'pi.e709', 'pi.e753', 'pi.e665', 'pi.e816', 'npoint.lc40x', 'analog'}. 
+fastZControllerType = '';           % If supplied, one of {'useMotor2', 'pi.e709', 'pi.e753', 'pi.e665', 'pi.e816', 'npoint.lc40x', 'analog'}. 
 fastZCOMPort = [];                  % Integer identifying COM port for controller, if using serial communication
 fastZBaudRate = [];                 % Value identifying baud rate of serial communication. If empty, default value for controller used.
 
 %Some FastZ hardware requires or benefits from use of an analog output used to control sweep/step profiles
 %If analog control is used, then an analog sensor (input channel) must also be configured
-fastZDeviceName = 'Dev3';               % String specifying device name used for FastZ control
+fastZDeviceName = '';               % String specifying device name used for FastZ control
 frameClockIn = '';                  % One of {PFI0..15, ''} to which external frame trigger is connected. Leave empty for automatic routing via PXI/RTSI bus
-fastZAOChanID = [0];                 % Scalar integer indicating AO channel used for FastZ control
-fastZAIChanID = [0];                 % Scalar integer indicating AI channel used for FastZ sensor
+fastZAOChanID = [];                 % Scalar integer indicating AO channel used for FastZ control
+fastZAIChanID = [];                 % Scalar integer indicating AI channel used for FastZ sensor
 
 %% LSC Pure Analog
-commandVoltsPerMicron = [0.0595]; % Conversion factor for command signal to analog linear stage controller
-sensorVoltsPerMicron = [0.0595 * 2];  % Conversion signal for sensor signal from analog linear stage controller. Leave empty for automatic calibration
+commandVoltsPerMicron = []; % Conversion factor for command signal to analog linear stage controller
+sensorVoltsPerMicron = [];  % Conversion signal for sensor signal from analog linear stage controller. Leave empty for automatic calibration
 
 commandVoltsOffset = 0; % Offset value, in volts, for command signal to analog linear stage controller
 sensorVoltsOffset = 0;  % Offset value, in volts, for sensor signal from analog linear stage controller. Leave empty for automatic calibration
@@ -129,8 +130,8 @@ maxCommandPosn = [];        % Maximum allowable position command in microns
 minCommandVolts = [];       % Minimum allowable voltage command
 minCommandPosn = [];        % Minimum allowable position command in microns
 
-analogCmdBoardID = 'Dev3'; % String specifying NI board identifier (e.g. 'Dev1') containing AO channel for LSC control
-analogCmdChanIDs = [0]; % Scalar indicating AO channel number (e.g. 0) used for analog LSC control
-analogSensorBoardID = 'Dev3'; % String specifying NI board identifier (e.g. 'Dev1') containing AI channel for LSC position sensor
-analogSensorChanIDs = [0]; % Scalar indicating AI channel number (e.g. 0) used for analog LSC position sensor
+analogCmdBoardID = ''; % String specifying NI board identifier (e.g. 'Dev1') containing AO channel for LSC control
+analogCmdChanIDs = []; % Scalar indicating AO channel number (e.g. 0) used for analog LSC control
+analogSensorBoardID = ''; % String specifying NI board identifier (e.g. 'Dev1') containing AI channel for LSC position sensor
+analogSensorChanIDs = []; % Scalar indicating AI channel number (e.g. 0) used for analog LSC position sensor
 
