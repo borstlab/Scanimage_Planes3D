@@ -81,7 +81,7 @@ classdef Control < scanimage.interfaces.Class
                     obj.hAO.set('writeRegenMode','DAQmx_Val_AllowRegen');
                 end
             else
-                waveformOutput  = obj.hLinScan.hSI.scannerAO.ao_volts.G;
+                waveformOutput  = obj.hLinScan.hSI.scannerAO.ao_volts.G; %%AS: Thats where the output is output 
                 obj.hAO.set('writeRegenMode','DAQmx_Val_AllowRegen');
                 obj.waveformLength = size(waveformOutput,1);
             end
@@ -99,7 +99,7 @@ classdef Control < scanimage.interfaces.Class
             obj.hAO.cfgOutputBuffer(obj.waveformLength);
             obj.hAO.writeRelativeTo = 'DAQmx_Val_FirstSample';
             obj.hAO.writeOffset = 0;
-            obj.hAO.writeAnalogData(waveformOutput);
+            obj.hAO.writeAnalogData(waveformOutput); %%AS: AO is written here 
             obj.hAO.start();
             if obj.genSampClk
                 obj.hAOSampClk.start();
@@ -146,26 +146,26 @@ classdef Control < scanimage.interfaces.Class
             end
         end
         
-       function parkOrPointLaser(obj,xy)
+       function parkOrPointLaser(obj,xyz)
             %   ParkOrPointLaser(): parks laser at mdf defined park location (vars state.acq.parkAngleX & state.acq.parkAngleY); closes shutter and turns off beam with Pockels Cell
             %   ParkOrPointLaser(xy): parks laser at user defined location xy, a 2 element vector of optical degree values
             obj.assertNotActive('parkOrPointLaser');
             
-            if nargin < 2 || isempty(xy)
-                xy = [obj.hLinScan.mdfData.scanParkAngleX obj.hLinScan.mdfData.scanParkAngleY];
+            if nargin < 2 || isempty(xyz)
+                xyz = [obj.hLinScan.mdfData.scanParkAngleX obj.hLinScan.mdfData.scanParkAngleY obj.hLinScan.mdfData.scanParkAngleZ];
             else
-                validateattributes(xy,{'numeric'},{'vector','numel',2});
+                validateattributes(xyz,{'numeric'},{'vector','numel',3});
             end
             
-            xy = [xy(:,1)*obj.hLinScan.mdfData.voltsPerOpticalDegreeX xy(:,2)*obj.hLinScan.mdfData.voltsPerOpticalDegreeY];
+            xyz = [xyz(:,1)*obj.hLinScan.mdfData.voltsPerOpticalDegreeX xyz(:,2)*obj.hLinScan.mdfData.voltsPerOpticalDegreeY xyz(:,3)*obj.hLinScan.mdfData.voltsPerOpticalDegreeZ];
 
             obj.hAO.control('DAQmx_Val_Task_Unreserve');
-            obj.hAOSingleSample.writeAnalogData(xy, 0.2, true);
+            obj.hAOSingleSample.writeAnalogData(xyz, 0.2, true);
        end
        
        function centerScanner(obj)
            obj.hAO.control('DAQmx_Val_Task_Unreserve');
-           obj.hAOSingleSample.writeAnalogData([0 0], 0.2, true);
+           obj.hAOSingleSample.writeAnalogData([0 0 0], 0.2, true);
        end
     end
     
@@ -332,6 +332,7 @@ classdef Control < scanimage.interfaces.Class
             obj.hAO = most.util.safeCreateTask([obj.hLinScan.name '-ScannerOut']);
             obj.hAO.createAOVoltageChan(linScanMDF.deviceNameGalvo, linScanMDF.XMirrorChannelID, 'XMirrorChannel');
             obj.hAO.createAOVoltageChan(linScanMDF.deviceNameGalvo, linScanMDF.YMirrorChannelID, 'YMirrorChannel');
+            obj.hAO.createAOVoltageChan(linScanMDF.deviceNameGalvo, linScanMDF.ZMirrorChannelID, 'ZMirrorChannel');
             
             % initialize extra AO channels for beams if they are on the same DAQ
             if ~isempty(linScanMDF.beamDaqID) && strcmp(beamMDF.beamDaqDevices{linScanMDF.beamDaqID}, linScanMDF.deviceNameGalvo)
@@ -358,6 +359,7 @@ classdef Control < scanimage.interfaces.Class
             obj.hAOSingleSample = most.util.safeCreateTask([obj.hLinScan.name '-ScannerOutSingleSample']);
             obj.hAOSingleSample.createAOVoltageChan(obj.hLinScan.mdfData.deviceNameGalvo, obj.hLinScan.mdfData.XMirrorChannelID,'XMirrorChannel');
             obj.hAOSingleSample.createAOVoltageChan(obj.hLinScan.mdfData.deviceNameGalvo, obj.hLinScan.mdfData.YMirrorChannelID, 'YMirrorChannel');
+            obj.hAOSingleSample.createAOVoltageChan(obj.hLinScan.mdfData.deviceNameGalvo, obj.hLinScan.mdfData.ZMirrorChannelID, 'ZMirrorChannel');
         end
         
 

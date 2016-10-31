@@ -22,7 +22,7 @@ function varargout = mainControlsV4(varargin)
 
 % Edit the above text to modify the response to help mainControlsV4
 
-% Last Modified by GUIDE v2.5 12-Oct-2016 14:57:48
+% Last Modified by GUIDE v2.5 17-Oct-2016 20:59:30
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1809,8 +1809,6 @@ function scanRotationX_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of scanRotationX as text
 %        str2double(get(hObject,'String')) returns contents of scanRotationX as a double
-hObject
-handles
 handles.hController.updateModel(hObject,eventdata,handles);
 
 
@@ -1824,4 +1822,28 @@ function scanRotationX_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
 set(hObject,'BackgroundColor','white');
+end
+
+
+
+function scanRotationY_Callback(hObject, eventdata, handles)
+% hObject    handle to scanRotationY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of scanRotationY as text
+%        str2double(get(hObject,'String')) returns contents of scanRotationY as a double
+handles.hController.updateModel(hObject,eventdata,handles);
+
+
+% --- Executes during object creation, after setting all properties.
+function scanRotationY_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to scanRotationY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end

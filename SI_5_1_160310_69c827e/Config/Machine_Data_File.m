@@ -7,7 +7,7 @@ scannerNames = {'LinScanner'};      % Cell array of string names for each scan p
 scannerTypes = {'Linear'};        % Cell array indicating the type of scanner for each name. Current options: {'Resonant' 'Linear}
 
 %Simulated mode
-simulated = true;                  % Boolean for activating simulated mode. For normal operation, set to 'false'. For operation without NI hardware attached, set to 'true'.
+simulated = false;                  % Boolean for activating simulated mode. For normal operation, set to 'false'. For operation without NI hardware attached, set to 'true'.
 
 %Optional components
 components = {};                    % Cell array of optional components to load. Ex: {'dabs.thorlabs.ECU1' 'dabs.thorlabs.BScope2'}
@@ -18,7 +18,7 @@ dataDir = '[MDF]\ConfigData';       % Directory to store persistent configuratio
 %% Shutters
 %Shutter(s) used to prevent any beam exposure from reaching specimen during idle periods. Multiple
 %shutters can be specified and will be assigned IDs in the order configured below.
-shutterDaqDevices = {'Dev3'};  % Cell array specifying the DAQ device or RIO devices for each shutter eg {'PXI1Slot3' 'PXI1Slot4'}
+shutterDaqDevices = {'Dev5'};  % Cell array specifying the DAQ device or RIO devices for each shutter eg {'PXI1Slot3' 'PXI1Slot4'}
 shutterChannelIDs = {'PFI0'};      % Cell array specifying the corresponding channel on the device for each shutter eg {'port0/line0' 'PFI12'}
 
 shutterOpenLevel = 1;               % Logical or 0/1 scalar indicating TTL level (0=LO;1=HI) corresponding to shutter open state for each shutter line. If scalar, value applies to all shutterLineIDs
@@ -43,9 +43,9 @@ beamDaqs(1).calUseRejectedLight = false;        % Scalar or array indicating if 
 beamDaqs(1).calOpenShutterIDs = [];             % Array of shutter IDs that must be opened for calibration (ie shutters before light modulation device).
 
 %% LinScan (LinScanner)
-deviceNameAcq   = 'Dev4';      % string identifying NI DAQ board for PMT channels input
-deviceNameGalvo = 'Dev3';      % string identifying NI DAQ board for controlling X/Y galvo. leave empty if same as deviceNameAcq
-deviceNameAux   = 'Dev3';      % string identifying NI DAQ board for outputting clocks. leave empty if unused. Must be a X-series board
+deviceNameAcq   = 'Dev1';      % string identifying NI DAQ board for PMT channels input
+deviceNameGalvo = 'Dev5';      % string identifying NI DAQ board for controlling X/Y galvo. leave empty if same as deviceNameAcq
+deviceNameAux   = 'Dev5';      % string identifying NI DAQ board for outputting clocks. leave empty if unused. Must be a X-series board
 
 %Optional
 channelsInvert = false;             % scalar or vector identifiying channels to invert. if scalar, the value is applied to all channels
@@ -63,15 +63,19 @@ ZMirrorChannelID = 2;               % The numeric ID of the Analog Output channe
 
 xGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for x galvo
 yGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for y galvo
+zGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for z galvo % needs to be changed to something meaningful
 
 scanParkAngleX = 0;              % Numeric [deg]: Optical degrees from center position for X galvo to park at when scanning is inactive
 scanParkAngleY = 0;              % Numeric [deg]: Optical degrees from center position for Y galvo to park at when scanning is inactive
+scanParkAngleZ = 3;
 
 voltsPerOpticalDegreeX = 0.5;         % galvo conversion factor from optical degrees to volts (negative values invert scan direction)
 voltsPerOpticalDegreeY = 0.5;         % galvo conversion factor from optical degrees to volts (negative values invert scan direction)
+voltsPerOpticalDegreeZ = 0.5;
 
 scanOffsetAngleX = 0;               % angle in optical degrees to shift command waveform applied to X-scanner
 scanOffsetAngleY = 0;               % angle in optical degrees to shift command waveform applied to Y-scanner
+scanOffsetAngleZ = 0;
 
 %Acquisition
 channelIDs = [];                    % Array of numeric channel IDs for PMT inputs. Leave empty for default channels (AI0...AIN-1)

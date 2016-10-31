@@ -11,24 +11,25 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
     properties (Constant)
         CONSTRAINTS = {@scanimage.mroi.constraints.evenPixelsPerLine @scanimage.mroi.constraints.maxWidth @scanimage.mroi.constraints.xCenterInRange...
                        @scanimage.mroi.constraints.maxHeight @scanimage.mroi.constraints.yCenterInRange};        
-        BEAM_SCANNER_ID = 3;
+        BEAM_SCANNER_ID = 4;
     end
     
     methods(Static)
         function obj=default
             g=scanimage.mroi.scanners.Galvo.default;
             b=scanimage.mroi.scanners.Beams.default;
-            obj=scanimage.mroi.scannerset.GalvoGalvo('Default GG set',g,g,b,.7,.001,true,true,0);
+            obj=scanimage.mroi.scannerset.GalvoGalvo('Default GG set',g,g,g,b,.7,.001,true,true,0);
         end
     end
     
     methods
-        function obj = GalvoGalvo(name,galvox,galvoy,beams,fillFractionSpatial,pixelTime,bidirectional,stepY,settleTimeFraction)
+        function obj = GalvoGalvo(name,galvox,galvoy,galvoz,beams,fillFractionSpatial,pixelTime,bidirectional,stepY,settleTimeFraction)
             scanimage.mroi.util.asserttype(galvox,'scanimage.mroi.scanners.Galvo');
             scanimage.mroi.util.asserttype(galvoy,'scanimage.mroi.scanners.Galvo');
+            scanimage.mroi.util.asserttype(galvoz,'scanimage.mroi.scanners.Galvo');
             
             obj.name = name;
-            obj.scanners={galvox,galvoy};
+            obj.scanners={galvox,galvoy,galvoz};
             obj.fillFractionSpatial = fillFractionSpatial;
             obj.pixelTime = pixelTime;
             obj.bidirectional = bidirectional;
@@ -44,7 +45,8 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
         function fovarray = fov(obj)
             galvoRangeX = obj.scanners{1}.fullAngleDegrees;
             galvoRangeY = obj.scanners{2}.fullAngleDegrees;
-            fovarray = [ -galvoRangeX/2 , galvoRangeX/2 , -galvoRangeY/2 , galvoRangeY/2 ];
+            galvoRangeZ = obj.scanners{3}.fullAngleDegrees;
+            fovarray = [ -galvoRangeX/2 , galvoRangeX/2 , -galvoRangeY/2 , galvoRangeY/2,  -galvoRangeZ/2 , galvoRangeZ/2 ];
         end
         
         function scanfield = satisfyConstraints(obj,scanfield)
@@ -66,12 +68,14 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
         function path_FOV = pathAoToFov(obj,ao_volts)
             path_FOV.G(:,1) = obj.volts2fov(ao_volts(:,1),1);
             path_FOV.G(:,2) = obj.volts2fov(ao_volts(:,2),2);
+            % AS prob. need one more line here at some point, not needed for FOCUS or GRAB
         end
         
         function ao_volts = pathFovToAo(obj,path_FOV)
             tolerance = 1e-4;
             assert(isempty(path_FOV.G) || (min(path_FOV.G(:,1) >= 0-tolerance) && max(path_FOV.G(:,1) <= 1+tolerance)), 'Attempted to scan outside X galvo scanner FOV.');
             assert(isempty(path_FOV.G) || (min(path_FOV.G(:,2) >= 0-tolerance) && max(path_FOV.G(:,2) <= 1+tolerance)), 'Attempted to scan outside Y galvo scanner FOV.');
+            assert(isempty(path_FOV.G) || (min(path_FOV.G(:,3) >= 0-tolerance) && max(path_FOV.G(:,3) <= 1+tolerance)), 'Attempted to scan outside Z galvo scanner FOV.');
             
             %avoid small rounding error
             path_FOV.G(path_FOV.G > 1) = 1;
@@ -80,6 +84,7 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             ao_volts = struct();
             ao_volts.G(:,1) = obj.fov2volts(path_FOV.G(:,1),1);
             ao_volts.G(:,2) = obj.fov2volts(path_FOV.G(:,2),2);
+            ao_volts.G(:,3) = obj.fov2volts(path_FOV.G(:,3),3);
             
             if obj.hasBeams
                 bIDs = obj.scanners{obj.BEAM_SCANNER_ID}.beamIDs;
@@ -256,7 +261,7 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             dt=obj.transitTime(scanfield_from,scanfield_to);
             
             gsamples = obj.nsamples(1,dt);
-            path_FOV.G = nan(gsamples,2);
+            path_FOV.G = nan(gsamples,3);
             
             if obj.hasBeams
                 bsamples = obj.nsamples(obj.BEAM_SCANNER_ID,dt);
@@ -443,6 +448,8 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
                     yy = [zeros(nTurn/2,1);yy;ones(nTurn/2,1)];
                 end
                 
+                zz = zeros(size(yy),'like',yy);
+
                 if obj.bidirectional
                     xx(:,2:2:end)=flipud(xx(:,2:2:end)); % flip every second line
                     
@@ -471,6 +478,8 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
                 % transform meshgrid into column vectors
                 xx = reshape(xx,[],1);
                 yy = reshape(yy,[],1);
+                zz = reshape(zz,[],1);
+
                 for line = 1:(ny-1)
                     startIdx = nTurn/2 + line*nx - nTurn + 1;
                     endIdx   = nTurn/2 + line*nx;
@@ -485,10 +494,11 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
                         yy(startIdx:endIdx) = turnY + (line-1)/(ny-1);
                     end
                 end
-                [xx,yy]=scanfield.transform(xx,yy);
+                [xx,yy,zz]=scanfield.transform(xx,yy,zz);
                 
                 path_FOV.G(:,1) = xx;
-                path_FOV.G(:,2) = yy;                
+                path_FOV.G(:,2) = yy;
+                path_FOV.G(:,3) = zz;
                 samples = size(path_FOV.G,1);
                 seconds = obj.nseconds(1,samples);
             end
@@ -743,12 +753,12 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             %          respectively.
             if isempty(iscanner)
                 assert(size(path_FOV,2)==2);
-                iscanner = [1,2];
+                iscanner = [1,2,3];
             end
             
-            A = cellfun(@(m) m.fullAngleDegrees,obj.scanners(1:2));     % amplitude
+            A = cellfun(@(m) m.fullAngleDegrees,obj.scanners(1:3));     % amplitude
             O = A./2;                                              % offset (degrees)
-            V = cellfun(@(m) m.voltsPerDegree,obj.scanners(1:2));       % degrees to volts conversion
+            V = cellfun(@(m) m.voltsPerDegree,obj.scanners(1:3));       % degrees to volts conversion
             
             % convert to volts
             ao_volts=zeros(size(path_FOV));

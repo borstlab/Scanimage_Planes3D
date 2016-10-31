@@ -8,6 +8,7 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
     properties (SetObservable) 
         degrees   % The obj.rect rectangle will be rotated about it's center by 'degree' degrees
         degreesX
+        degreesY
     end
     
     %% Abstract methods realization scanimage.mroi.scanfield.ScanField
@@ -38,12 +39,29 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
             rect=[mns(1) mns(2) d(1) d(2)];
         end       
 
-        function [xs,ys]=transform(obj,xs,ys)
+        function [xs,ys,zs]=transform2D(obj,xs,ys,zs)
             % Transforms points from unit-scan space to fov space
+            %r=[xs(:)';ys(:)';zs(:)'];
             r=[xs(:)';ys(:)';ones(size(xs(:)'))];
             r=obj.affine()*r;
             xs=reshape(r(1,:),size(xs));
             ys=reshape(r(2,:),size(ys));
+            zs=reshape(r(3,:),size(zs));
+        end
+        
+        function [xs,ys,zs]=transform(obj,xs,ys,zs)
+            % Transforms points from unit-scan space to fov space
+            
+            r=[xs(:)';ys(:)';zs(:)'];
+
+            r = r + repmat(obj.translationToOrigin(),size(r,2),1)'; 
+            r = r.*repmat(obj.scale(),size(r,2),1)';
+            r = obj.rotationMatrix()*r;
+            r = r + repmat(obj.translationToRectangle(),size(r,2),1)';
+            
+            xs=reshape(r(1,:),size(xs));
+            ys=reshape(r(2,:),size(ys));
+            zs=reshape(r(3,:),size(zs));
         end
     end
     
@@ -61,7 +79,36 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
             s=getPropertyStructForSaving@scanimage.mroi.scanfield.ImagingField(obj);
             s.degrees=obj.degrees;
         end
+        
+        function RM=rotationMatrix(obj)
+            
+            z_angle = obj.degrees*pi/180;
+            x_angle = obj.degreesX*pi/180;
+            y_angle = obj.degreesY*pi/180;
+            
+            RM_x = [1 0 0; 0 cos(x_angle) -sin(x_angle); 0 sin(x_angle) cos(x_angle)];
+            RM_y = [cos(y_angle) 0 sin(y_angle); 0 1 0; -sin(y_angle) 0 cos(y_angle)];
+            RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1];
+            RM = RM_x*RM_y*RM_z;
+        end
 
+        function O=translationToOrigin(obj)
+    
+            O=[-0.5 -0.5 0];
+        end
+        
+        function T=translationToRectangle(obj)
+            rc=num2cell(obj.rect);
+            [x0,y0,w,h]=deal(rc{:});
+            T=[x0+w/2 y0+h/2 0.5];
+        end
+        
+        function S=scale(obj)
+            rc=num2cell(obj.rect);
+            [x0,y0,w,h]=deal(rc{:});
+            S=[w h 1];
+        end
+            
         function T=affine(obj)
             % Returns the affine transform from pre-rotation to post-rotation
             
