@@ -75,7 +75,13 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             tolerance = 1e-4;
             assert(isempty(path_FOV.G) || (min(path_FOV.G(:,1) >= 0-tolerance) && max(path_FOV.G(:,1) <= 1+tolerance)), 'Attempted to scan outside X galvo scanner FOV.');
             assert(isempty(path_FOV.G) || (min(path_FOV.G(:,2) >= 0-tolerance) && max(path_FOV.G(:,2) <= 1+tolerance)), 'Attempted to scan outside Y galvo scanner FOV.');
-            assert(isempty(path_FOV.G) || (min(path_FOV.G(:,3) >= 0-tolerance) && max(path_FOV.G(:,3) <= 1+tolerance)), 'Attempted to scan outside Z galvo scanner FOV.');
+            % assert(isempty(path_FOV.G) || (min(path_FOV.G(:,3) >=
+            % 0-tolerance) && max(path_FOV.G(:,3) <= 1+tolerance)),
+            % 'Attempted to scan outside Z galvo scanner FOV.'); %% ATM
+            % this doesnt work as there are NaNs in the array which return
+            % a 'false' logical. Find out whether NaNs are still there when
+            % other problems solved, if yes, find a solution here to check
+            % for the array ok-ness otherwise
             
             %avoid small rounding error
             path_FOV.G(path_FOV.G > 1) = 1;
@@ -495,7 +501,7 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
                     end
                 end
                 [xx,yy,zz]=scanfield.transform(xx,yy,zz);
-                
+
                 path_FOV.G(:,1) = xx;
                 path_FOV.G(:,2) = yy;
                 path_FOV.G(:,3) = zz;
@@ -755,17 +761,26 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
                 assert(size(path_FOV,2)==2);
                 iscanner = [1,2,3];
             end
-            
-            A = cellfun(@(m) m.fullAngleDegrees,obj.scanners(1:3));     % amplitude
-            O = A./2;                                              % offset (degrees)
+            A = cellfun(@(m) m.fullAngleDegrees,obj.scanners(1:3));     % amplitude, 15 default, for the third scanner this is in microns
             V = cellfun(@(m) m.voltsPerDegree,obj.scanners(1:3));       % degrees to volts conversion
+            M = cellfun(@(m) m.opticalDegreesPerMicronXY,obj.scanners(1:3)); %  degrees to microns conversion; IMPORTANT NOTE: for scanners 1 and 2 (the actual galvos) this is opticalDegreesPerMicronXY in MDF. For scanner 3 (the piezo), this is voltsPerMicronZ. This has to be fixed in a future version.
+            
+            voltsPerMicronX = M(1)*V(1);
+            voltsPerMicronY = M(2)*V(2);
+            assert(voltsPerMicronX == voltsPerMicronY, 'Conversion factors (voltsPerMicron) for x and y Galvo are different. This is not possible in the current version.')
+            
+            voltsPerMicronZ = M(3);
+            voltsPerMicron = [voltsPerMicronX voltsPerMicronX voltsPerMicronZ];
+            
+            fullRangeMicrons = [A(1)/M(1) A(2)/M(2) A(3)];
+            O = [A(1)/M(1) A(2)/M(2) A(3)]./2;
             
             % convert to volts
             ao_volts=zeros(size(path_FOV));
             
             iter = 1;
             for scanner = iscanner
-                ao_volts(:,iter)=V(scanner)*(path_FOV(:,iter)*A(scanner)-O(scanner));
+                ao_volts(:,iter)=voltsPerMicron(scanner)*(path_FOV(:,iter)*fullRangeMicrons(scanner)-O(scanner));
                 iter = iter + 1;
             end
         end

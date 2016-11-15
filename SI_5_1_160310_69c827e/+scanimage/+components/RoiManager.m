@@ -10,6 +10,10 @@ classdef RoiManager < scanimage.interfaces.Component
         scanRotation   = 0;             % [degrees] defaultROI only: rotation counter clockwise about the Z-axis of the scanned area or line
         scanRotationX  = 0;             % [degrees] defaultROI only: rotation counter clockwise (?) about the X-axis of the scanned area or line
         scanRotationY  = 0;             % [degrees] defaultROI only: rotation counter clockwise (?) about the Y-axis of the scanned area or line
+        ShiftZ = 0;                     % [microns] 
+        RelTranslationX = 0;            % [microns] 
+        RelTranslationY = 0;            % [microns] 
+        RelTranslationZ = 0;            % [microns] 
         scanAngleMultiplierSlow = 1;    % [1] defaultROI only: scale slow output
         scanAngleMultiplierFast = 1;    % [1] defaultROI only: scale fast scanner output
         scanAngleShiftSlow = 0;         % [1] defaultROI only: shift slow scanner output (in FOV coordinates)
@@ -73,7 +77,7 @@ classdef RoiManager < scanimage.interfaces.Component
         COMPONENT_NAME = 'RoiGroup';                        % [char array] short name describing functionality of component e.g. 'Beams' or 'FastZ'
         PROP_TRUE_LIVE_UPDATE = {};                         % Cell array of strings specifying properties that can be set while the component is active
         PROP_FOCUS_TRUE_LIVE_UPDATE = {...                  % Cell array of strings specifying properties that can be set while focusing
-            'scanZoomFactor','scanRotation','scanRotationX','scanRotationY','scanAngleMultiplierSlow',...
+            'scanZoomFactor','scanRotation','scanRotationX','scanRotationY','ShiftZ','RelTranslationX','RelTranslationY','RelTranslationZ','scanAngleMultiplierSlow',...
             'scanAngleMultiplierFast','scanAngleShiftSlow','scanAngleShiftFast'};
         DENY_PROP_LIVE_UPDATE = {};                         % Cell array of strings specifying properties for which a live update is denied (during acqState = Focus)
         
@@ -181,20 +185,45 @@ classdef RoiManager < scanimage.interfaces.Component
             rect([1,2]) = rect([1,2]) + 0.5;
             rect(1) = rect(1) + obj.scanAngleShiftFast;
             rect(2) = rect(2) + obj.scanAngleShiftSlow;
-            
+
             %Transform from scanner coords to ref coords
             rect = most.idioms.xformRect(rect,obj.hSI.hScan2D.scannerToRefTransform);
-            
+
+            %Convert from microns to FOV corrdinates
+            RelTranslationYFOV = obj.microns2FOVXYZ(obj.RelTranslationY);
+            RelTranslationXFOV = obj.microns2FOVXYZ(obj.RelTranslationX);
+            RelTranslationZFOV = obj.microns2FOVXYZ(obj.RelTranslationZ);
+            ShiftZFOV = obj.microns2FOVXYZ(obj.ShiftZ);
+
             % replace existing roi in default roi group with new roi
             obj.roiGroupDefault_.rois(1).scanfields(1).rect = rect;
             obj.roiGroupDefault_.rois(1).scanfields(1).degrees = obj.scanRotation;
             obj.roiGroupDefault_.rois(1).scanfields(1).degreesX = obj.scanRotationX;
             obj.roiGroupDefault_.rois(1).scanfields(1).degreesY = obj.scanRotationY;
+            obj.roiGroupDefault_.rois(1).scanfields(1).zAbsolute = ShiftZFOV;
+            obj.roiGroupDefault_.rois(1).scanfields(1).zRelative = RelTranslationZFOV;
+            obj.roiGroupDefault_.rois(1).scanfields(1).yRelative = RelTranslationYFOV;
+            obj.roiGroupDefault_.rois(1).scanfields(1).xRelative = RelTranslationXFOV;
             obj.roiGroupDefault_.rois(1).scanfields(1).pixelResolution = [obj.pixelsPerLine, obj.linesPerFrame];
             
             val = obj.roiGroupDefault_;
         end
         
+        function val_FOV = microns2FOVXY(obj,val)
+            % obsolete; see microns2FOVXYZ
+            val_FOV = val/(obj.hSI.hScan2D.mdfData.xGalvoAngularRange/obj.hSI.hScan2D.mdfData.opticalDegreesPerMicronXY);
+        end
+        
+        function val_FOV = microns2FOVZ(obj,val)
+            %obsolete; see microns2FOVXYZ
+            val_FOV = val/obj.hSI.hScan2D.mdfData.zPiezoRange;
+        end
+        
+        function val_FOV = microns2FOVXYZ(obj,val) 
+            % microns to FOV should be equivalent for all 3 axes; only volts are different
+            val_FOV = val/(obj.hSI.hScan2D.mdfData.xGalvoAngularRange/obj.hSI.hScan2D.mdfData.opticalDegreesPerMicronXY);
+            
+        end
         function set.scanAngleMultiplierFast(obj,val)
             val = obj.validatePropArg('scanAngleMultiplierFast',val);
             if obj.componentUpdateProperty('scanAngleMultiplierFast',val)
@@ -424,6 +453,8 @@ classdef RoiManager < scanimage.interfaces.Component
             end
         end
         
+        % maybe need more functions here for new controls
+        
         function set.scanZoomFactor(obj,val)
             val = obj.validatePropArg('scanZoomFactor',val);
             if obj.componentUpdateProperty('scanZoomFactor',val)
@@ -596,6 +627,10 @@ s.scanZoomFactor            = struct('Classes','numeric','Attributes',{{'scalar'
 s.scanRotation              = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.scanRotationX              = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.scanRotationY              = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
+s.ShiftZ                    = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
+s.RelTranslationX           = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
+s.RelTranslationY           = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
+s.RelTranslationZ           = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.scanAngleMultiplierSlow   = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',0,'<=',1}});
 s.scanAngleMultiplierFast   = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',0,'<=',1}});
 s.forceSquarePixelation     = struct('Classes','binaryflex','Attributes',{{'scalar'}});

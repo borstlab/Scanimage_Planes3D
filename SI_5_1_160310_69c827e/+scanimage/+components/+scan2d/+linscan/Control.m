@@ -81,7 +81,7 @@ classdef Control < scanimage.interfaces.Class
                     obj.hAO.set('writeRegenMode','DAQmx_Val_AllowRegen');
                 end
             else
-                waveformOutput  = obj.hLinScan.hSI.scannerAO.ao_volts.G; %%AS: Thats where the output is output 
+                waveformOutput  = obj.hLinScan.hSI.scannerAO.ao_volts.G; %%AS: Thats where the output is output
                 obj.hAO.set('writeRegenMode','DAQmx_Val_AllowRegen');
                 obj.waveformLength = size(waveformOutput,1);
             end
@@ -157,7 +157,7 @@ classdef Control < scanimage.interfaces.Class
                 validateattributes(xyz,{'numeric'},{'vector','numel',3});
             end
             
-            xyz = [xyz(:,1)*obj.hLinScan.mdfData.voltsPerOpticalDegreeX xyz(:,2)*obj.hLinScan.mdfData.voltsPerOpticalDegreeY xyz(:,3)*obj.hLinScan.mdfData.voltsPerOpticalDegreeZ];
+            xyz = [xyz(:,1)*obj.hLinScan.mdfData.voltsPerOpticalDegreeX xyz(:,2)*obj.hLinScan.mdfData.voltsPerOpticalDegreeY xyz(:,3)*obj.hLinScan.mdfData.voltsPerMicronZ];
 
             obj.hAO.control('DAQmx_Val_Task_Unreserve');
             obj.hAOSingleSample.writeAnalogData(xyz, 0.2, true);

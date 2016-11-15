@@ -103,7 +103,7 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             addedPaths_ = most.idioms.addPaths(requiredPaths);
                         
             visibleGuis = {'mainControlsV4' 'imageControlsV4' 'configControlsV4' 'channelControlsV4'};
-            hiddenGuis = {'motorControlsV5' 'posnControlsV5' 'fastZControlsV4' 'powerControlsV4' 'powerBoxControlsV4'...
+            hiddenGuis = {'zDisplayV1', 'motorControlsV5' 'posnControlsV5' 'fastZControlsV4' 'powerControlsV4' 'powerBoxControlsV4'...
                 'fastConfigurationV4' 'userFunctionControlsV4' 'triggerControlsV5' 'userSettingsV4' 'mroiControlsV5'...
                 'photostimControlsV5' 'alignmentControlsV5' 'pmtControlsV5' 'pointClickInterfaceV5'};
             hiddenGuis(cellfun(@(x)~exist(x),hiddenGuis)) = [];
@@ -140,6 +140,7 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             obj.ziniFastZControls();
             obj.ziniChannelControls();
             obj.ziniRegisterFigs();
+            obj.ziniZDisplay();
 
             obj.hCycleManagerCtrl = scanimage.ctrl.CycleManagerController(hModel.hCycleManager);
             obj.registerGUI(obj.hCycleManagerCtrl.view.gui);
@@ -395,6 +396,10 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
                 set(src,'CloseRequestFcn',[]); % User clicked yes, don't ask again even if exit fails
                 obj.exit();
             end
+        end
+        
+        function ziniZDisplay(obj)
+            
         end
         
         function ziniConfigControls(obj)
@@ -2812,6 +2817,116 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             obj.hModel.hRoiManager.scanRotationY = obj.hModel.hRoiManager.scanRotationY + inc;
         end
         
+        function zeroScanRotationX(obj,src)
+            obj.hModel.hRoiManager.scanRotationX = 0;
+        end
+        
+        function zeroScanRotationY(obj,src)
+            obj.hModel.hRoiManager.scanRotationY = 0;
+        end
+        
+        function zeroShiftZ(obj)
+            obj.hModel.hRoiManager.ShiftZ = 0;
+        end
+        
+        function changeShiftZ(obj,src,inc)
+            obj.hModel.hRoiManager.ShiftZ = obj.hModel.hRoiManager.ShiftZ + inc;
+        end
+        
+        function changeRelTranslationZ(obj,src,inc)
+            obj.hModel.hRoiManager.RelTranslationZ = obj.hModel.hRoiManager.RelTranslationZ + inc;
+        end
+        
+        function changeRelTranslationY(obj,src,inc)
+            obj.hModel.hRoiManager.RelTranslationY = obj.hModel.hRoiManager.RelTranslationY + inc;
+        end
+        
+        function changeRelTranslationX(obj,src,inc)
+            obj.hModel.hRoiManager.RelTranslationX = obj.hModel.hRoiManager.RelTranslationX + inc;
+        end
+        
+        
+        function updateZDisplay(obj,src,inc,state)
+            figure(obj.hGUIData.zDisplayV1.figure1);
+            subplot(3,4,[1,2,3,5,6,7,9,10,11],'replace');
+            cla;
+            
+            state = sum(sign(get(inc.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+            units = get(inc.hController.hGUIData.zDisplayV1.changeUnits,'String');
+            unit = units{get(inc.hController.hGUIData.zDisplayV1.changeUnits,'Value')};
+            
+            if strcmp(unit,'FOV')
+                wave = inc.hModel.hScan2D.currentRoiGroupScannerCoords.scanStackFOV(inc.hModel.hScan2D.scannerset, 0, '',0);
+                axis([-0.1 1.1 -0.1 1.1 -0.1 1.1])
+            elseif strcmp(unit,'Microns')
+                wave = inc.hModel.hScan2D.currentRoiGroupScannerCoords.scanStackFOV(inc.hModel.hScan2D.scannerset, 0, '',0);
+                wave.G = wave.G*(obj.hModel.hScan2D.mdfData.xGalvoAngularRange/obj.hModel.hScan2D.mdfData.opticalDegreesPerMicronXY);
+                obj.hModel.hScan2D.mdfData.xGalvoAngularRange
+                axis([-10 300 -10 300 -10 300])
+            elseif strcmp(unit,'Volt AO')
+                wave = inc.hModel.hScan2D.currentRoiGroupScannerCoords.scanStackAO(inc.hModel.hScan2D.scannerset, 0, '',0);
+                axis([-5 5 -5 5 -5 5])
+            end
+            
+            len_AO = length(wave.G(:,2));
+            if state == 2
+                cmap = colormap(parula);
+                colors = 1:len_AO;
+            elseif state == 3
+                cmap = colormap(copper);
+                colors = wave.G(:,3);
+            else
+                cmap = colormap(copper);
+                colors = wave.G(:,3);
+            end   
+            
+            indices = 1:50:len_AO;
+            scatter3(wave.G(indices,1),wave.G(indices,2),wave.G(indices,3),5,colors(indices),'Marker','o', 'LineWidth',5)
+            axis equal
+            xlabel('x'); ylabel('y'); zlabel('z')
+            az = -20; el = -40; view(az,el)
+            
+            %axis([-5 5 -5 5 -5 5])
+            rotate3d on
+            hold on
+            first_notnan = wave.G(~isnan(wave.G(:,3)),3);
+            first_notnan = first_notnan(1);
+            plot3(wave.G(1,1),wave.G(1,2),first_notnan,'r.','MarkerSize',5)
+            hold off
+            h = colorbar('location','westoutside','Box','off');
+            if state == 2
+                set(h,'YDir','reverse');
+                set(get(h,'YLabel'),'String','scan order (blue to yellow)');
+                set(h,'YTickLabel',{})
+            elseif state == 3
+                if strcmp(unit,'FOV')
+                    set(get(h,'YLabel'),'String','FOV (relative corrdinates)');
+                elseif strcmp(unit,'Volt AO')
+                    set(get(h,'YLabel'),'String','Volt AO');
+                elseif strcmp(unit,'Microns')
+                    set(get(h,'YLabel'),'String','microns z');
+                end
+            end 
+            
+            h = subplot(3,4,4);
+            plot(wave.G(:,1),'k');
+            set(h,'XTickLabel',{})
+            xlim([0 len_AO+len_AO/15])
+            xlabel('x')
+                
+            h = subplot(3,4,8);
+            plot(wave.G(:,2),'k');
+            set(h,'XTickLabel',{})
+            xlim([0 len_AO+len_AO/15])
+            ylabel('AO Voltage')
+            xlabel('y')
+            
+            h = subplot(3,4,12);
+            plot(wave.G(:,3),'k');
+            set(h,'XTickLabel',{})
+            xlim([0 len_AO+len_AO/15])
+            xlabel('z')
+        end
     end
     
     %% INTERNAL METHODS
@@ -2975,8 +3090,12 @@ function s = lclInitPropBindings(hModel)
     s.hRoiManager.scanFrameRate            = struct('GuiIDs',{{'configControlsV4','etFrameRate'}},'ViewPrecision','%.2f');
     s.hRoiManager.linePeriod               = struct('GuiIDs',{{'configControlsV4','etLinePeriod'}},'ViewScaling',1e6,'ViewPrecision','%.2f');
     s.hRoiManager.scanRotation             = struct('GuiIDs',{{'mainControlsV4','scanRotation'}});
-    s.hRoiManager.scanRotationX             = struct('GuiIDs',{{'mainControlsV4','scanRotationX'}});
-    s.hRoiManager.scanRotationY             = struct('GuiIDs',{{'mainControlsV4','scanRotationY'}});
+    s.hRoiManager.scanRotationX            = struct('GuiIDs',{{'mainControlsV4','scanRotationX'}});
+    s.hRoiManager.scanRotationY            = struct('GuiIDs',{{'mainControlsV4','scanRotationY'}});
+    s.hRoiManager.ShiftZ                   = struct('GuiIDs',{{'mainControlsV4','ShiftZ'}});
+    s.hRoiManager.RelTranslationX          = struct('GuiIDs',{{'mainControlsV4','RelTranslationX'}});
+    s.hRoiManager.RelTranslationY          = struct('GuiIDs',{{'mainControlsV4','RelTranslationY'}});
+    s.hRoiManager.RelTranslationZ          = struct('GuiIDs',{{'mainControlsV4','RelTranslationZ'}});
     s.hRoiManager.scanZoomFactor           = struct('GuiIDs',{{'mainControlsV4' 'pcZoom'}});
     s.hRoiManager.scanVolumeRate           = struct('GuiIDs',{{'fastZControlsV4', 'etVolumeRate'}},'ViewPrecision','%.2f');
     s.hRoiManager.mroiEnable               = struct('GuiIDs',{{'mainControlsV4', 'cbEnableMroi'}},'Callback','updateFrameBatchOptions');

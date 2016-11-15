@@ -1,4 +1,4 @@
-classdef Galvo < handle
+classdef PiezoLikeGalvo < handle
 
     properties
         sampleRateHz;
@@ -7,7 +7,6 @@ classdef Galvo < handle
         flytoTimeSeconds;
         flybackTimeSeconds;
         parkAngleDegrees;
-        opticalDegreesPerMicronXY
     end
 
     properties(SetObservable)
@@ -20,15 +19,14 @@ classdef Galvo < handle
 
     methods(Static)
         function obj = default
-            obj=scanimage.mroi.scanners.Galvo(27,20/27,27/128,1e-3,-27/2,200000);
+            obj=scanimage.mroi.scanners.PiezoLikeGalvo(27,20/27,27/128,1e-3,-27/2,200000);
         end
     end
 
     methods
         % See Note (1)
-        function obj=Galvo(fullAngleDegrees,...
+        function obj=PiezoLikeGalvo(fullAngleDegrees,...
                            voltsPerDegree,...
-                           opticalDegreesPerMicronXY,...
                            flytoTimeSeconds,...
                            flybackTimeSeconds,...
                            parkAngleDegrees,...
@@ -39,7 +37,6 @@ classdef Galvo < handle
             obj.flybackTimeSeconds = flybackTimeSeconds;
             obj.parkAngleDegrees   = parkAngleDegrees;
             obj.sampleRateHz       = sampleRateHz;
-            obj.opticalDegreesPerMicronXY = opticalDegreesPerMicronXY;
         end
 
         function set.pixelCount(obj,val)

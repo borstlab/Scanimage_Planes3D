@@ -22,7 +22,7 @@ function varargout = mainControlsV4(varargin)
 
 % Edit the above text to modify the response to help mainControlsV4
 
-% Last Modified by GUIDE v2.5 17-Oct-2016 20:59:30
+% Last Modified by GUIDE v2.5 03-Nov-2016 13:40:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -339,6 +339,8 @@ function scanRotation_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of scanRotation as text
 %        str2double(get(hObject,'String')) returns contents of scanRotation as a double
 handles.hController.updateModel(hObject,eventdata,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
 
 % --- Executes on button press in zeroRotate.
 function zeroRotate_Callback(hObject, eventdata, handles)
@@ -1155,6 +1157,9 @@ handles.hController.showGUI('acquisitionControlsV4');
 function mnu_View_ImageControls_Callback(hObject, eventdata, handles)
 handles.hController.showGUI('imageControlsV4');
 
+function mnu_View_zDisplay_Callback(hObject, eventdata, handles)
+handles.hController.showGUI('zDisplayV1');
+
 function mnu_View_PowerControls_Callback(hObject, eventdata, handles)
 handles.hController.showGUI('powerControlsV4');
 
@@ -1184,6 +1189,8 @@ handles.hController.showChannelDisplay(4);
 
 function mnu_View_ChannelMergeDisplay_Callback(hObject, eventdata, handles)
 handles.hController.showMergeDisplay(0);
+
+
 
 
 % --- Executes on button press in cbAutoSave.
@@ -1810,7 +1817,8 @@ function scanRotationX_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of scanRotationX as text
 %        str2double(get(hObject,'String')) returns contents of scanRotationX as a double
 handles.hController.updateModel(hObject,eventdata,handles);
-
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
 
 % --- Executes during object creation, after setting all properties.
 function scanRotationX_CreateFcn(hObject, eventdata, handles)
@@ -1834,6 +1842,8 @@ function scanRotationY_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of scanRotationY as text
 %        str2double(get(hObject,'String')) returns contents of scanRotationY as a double
 handles.hController.updateModel(hObject,eventdata,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -1847,3 +1857,296 @@ function scanRotationY_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on slider movement.
+function scanRotationYSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to scanRotationYSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = sign(get(hObject,'Value'));
+set(hObject,'Value',0);
+handles.hController.changeScanRotationY(hObject,val);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+
+% --- Executes during object creation, after setting all properties.
+function scanRotationYSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to scanRotationYSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on slider movement.
+function scanRotationXSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to scanRotationXSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = sign(get(hObject,'Value'));
+set(hObject,'Value',0);
+handles.hController.changeScanRotationX(hObject,val);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+% --- Executes during object creation, after setting all properties.
+function scanRotationXSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to scanRotationXSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in zeroRotateX.
+function zeroRotateX_Callback(hObject, eventdata, handles)
+% hObject    handle to zeroRotateX (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.hController.zeroScanRotationX(hObject);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+% --- Executes on button press in zeroRotateY.
+function zeroRotateY_Callback(hObject, eventdata, handles)
+% hObject    handle to zeroRotateY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.hController.zeroScanRotationY(hObject);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+%%% Relative translation
+
+% --- Executes on slider movement.
+function RelTranslationXSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to RelTranslationXSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = sign(get(hObject,'Value'));
+set(hObject,'Value',0);
+handles.hController.changeRelTranslationX(hObject,val);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+% --- Executes during object creation, after setting all properties.
+function RelTranslationXSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RelTranslationXSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+function RelTranslationX_Callback(hObject, eventdata, handles)
+% hObject    handle to RelTranslationX (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of RelTranslationX as text
+%        str2double(get(hObject,'String')) returns contents of RelTranslationX as a double
+handles.hController.updateModel(hObject,eventdata,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+
+% --- Executes during object creation, after setting all properties.
+function RelTranslationX_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RelTranslationX (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on slider movement.
+function RelTranslationYSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to RelTranslationYSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = sign(get(hObject,'Value'));
+set(hObject,'Value',0);
+handles.hController.changeRelTranslationY(hObject,val);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+% --- Executes during object creation, after setting all properties.
+function RelTranslationYSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RelTranslationYSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function RelTranslationY_Callback(hObject, eventdata, handles)
+% hObject    handle to RelTranslationY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of RelTranslationY as text
+%        str2double(get(hObject,'String')) returns contents of RelTranslationY as a double
+handles.hController.updateModel(hObject,eventdata,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+
+% --- Executes during object creation, after setting all properties.
+function RelTranslationY_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RelTranslationY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on slider movement.
+function RelTranslationZSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to RelTranslationZSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = sign(get(hObject,'Value'));
+set(hObject,'Value',0);
+handles.hController.changeRelTranslationZ(hObject,val);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+% --- Executes during object creation, after setting all properties.
+function RelTranslationZSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RelTranslationZSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function RelTranslationZ_Callback(hObject, eventdata, handles)
+% hObject    handle to RelTranslationZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of RelTranslationZ as text
+%        str2double(get(hObject,'String')) returns contents of RelTranslationZ as a double
+handles.hController.updateModel(hObject,eventdata,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+
+% --- Executes during object creation, after setting all properties.
+function RelTranslationZ_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to RelTranslationZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%%% ShiftZ
+
+
+% --- Executes on slider movement.
+function ShiftZSlider_Callback(hObject, eventdata, handles)
+% hObject    handle to ShiftZSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+val = sign(get(hObject,'Value'));
+set(hObject,'Value',0);
+handles.hController.changeShiftZ(hObject,val);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+% --- Executes during object creation, after setting all properties.
+function ShiftZSlider_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ShiftZSlider (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function ShiftZ_Callback(hObject, eventdata, handles)
+% hObject    handle to ShiftZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of ShiftZ as text
+%        str2double(get(hObject,'String')) returns contents of ShiftZ as a double
+handles.hController.updateModel(hObject,eventdata,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);
+
+
+% --- Executes during object creation, after setting all properties.
+function ShiftZ_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ShiftZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in zeroShiftZ.
+function zeroShiftZ_Callback(hObject, eventdata, handles)
+% hObject    handle to zeroShiftZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+handles.hController.zeroShiftZ(hObject);
+handles.hController.updateZDisplay(hObject,handles);
+state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
+handles.hController.updateZDisplay(hObject,handles, state);

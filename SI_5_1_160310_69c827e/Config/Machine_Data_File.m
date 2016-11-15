@@ -59,23 +59,25 @@ enableRefClkOutput = false;         % Enables/disables the export of the 10MHz r
 %Scanner control
 XMirrorChannelID = 0;               % The numeric ID of the Analog Output channel to be used to control the X Galvo.
 YMirrorChannelID = 1;               % The numeric ID of the Analog Output channel to be used to control the y Galvo.
-ZMirrorChannelID = 2;               % The numeric ID of the Analog Output channel to be used to control the z piezo.
+ZMirrorChannelID = 2;               % The numeric ID of the Analog Output channel to be used to control the Z piezo.
 
 xGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for x galvo
 yGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for y galvo
-zGalvoAngularRange = 15;            % max range in optical degrees (pk-pk) for z galvo % needs to be changed to something meaningful
+zPiezoRange = 280;                  % max range in microns for z piezo
 
 scanParkAngleX = 0;              % Numeric [deg]: Optical degrees from center position for X galvo to park at when scanning is inactive
 scanParkAngleY = 0;              % Numeric [deg]: Optical degrees from center position for Y galvo to park at when scanning is inactive
-scanParkAngleZ = 3;
+scanParkAngleZ = 3;              % Numeric [microns]: Microns from center position for Z piezo to park when scanning is inactive [feature currently not implemented]
 
 voltsPerOpticalDegreeX = 0.5;         % galvo conversion factor from optical degrees to volts (negative values invert scan direction)
 voltsPerOpticalDegreeY = 0.5;         % galvo conversion factor from optical degrees to volts (negative values invert scan direction)
-voltsPerOpticalDegreeZ = 0.5;
+opticalDegreesPerMicronXY = 0.053;    % conversion factor from Galvo optical degrees to microns in the sample (measure empirically with micromanipulator or a sample of known size)
+voltsPerMicronZ = 0.05;               % conversion factor from zPiezo volts to microns depth in the sample (calculate theoretically or measure)
+dummyValueZ= 0;                       % necessary atm because Piezo and Galvos are the same class, change at some point
 
 scanOffsetAngleX = 0;               % angle in optical degrees to shift command waveform applied to X-scanner
 scanOffsetAngleY = 0;               % angle in optical degrees to shift command waveform applied to Y-scanner
-scanOffsetAngleZ = 0;
+scanOffsetAngleZ = 0;               % not implemented ATM
 
 %Acquisition
 channelIDs = [];                    % Array of numeric channel IDs for PMT inputs. Leave empty for default channels (AI0...AIN-1)

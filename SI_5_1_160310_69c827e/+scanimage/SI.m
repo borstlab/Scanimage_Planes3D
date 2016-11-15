@@ -977,12 +977,11 @@ classdef SI < scanimage.interfaces.Component & most.HasMachineDataFile & dynamic
                 fb = 0;
                 waveform = '';
             end
-            
+
             % generate ao using scannerset
             [obj.scannerAO.ao_volts, obj.scannerAO.ao_samplesPerTrigger] = ...
                 obj.hScan2D.currentRoiGroupScannerCoords.scanStackAO(obj.hScan2D.scannerset,zs,waveform,fb);
             
-            plot(obj.scannerAO.ao_volts.G(:,3))
             % check ao
             assert(size(obj.scannerAO.ao_volts.G,1) > 0, 'Generated AO is empty. Ensure that there are active ROIs with scanfields that exist in the current Z series.');
         end

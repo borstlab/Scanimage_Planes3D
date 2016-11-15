@@ -82,6 +82,7 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
             obj.degrees = val;
             obj.fireChangedEvent(oldVal,val);
         end
+        
     end
     
     methods
@@ -96,9 +97,10 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
             x_angle = obj.degreesX*pi/180;
             y_angle = obj.degreesY*pi/180;
             
-            RM_x = [1 0 0; 0 cos(x_angle) -sin(x_angle); 0 sin(x_angle) cos(x_angle)];
-            RM_y = [cos(y_angle) 0 sin(y_angle); 0 1 0; -sin(y_angle) 0 cos(y_angle)];
-            RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1];
+            
+            RM_x = [1 0 0; 0 cos(x_angle) -sin(x_angle); 0 sin(x_angle) cos(x_angle)]; %AS
+            RM_y = [cos(y_angle) 0 sin(y_angle); 0 1 0; -sin(y_angle) 0 cos(y_angle)]; %AS
+            RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1]; %AS
             RM = RM_x*RM_y*RM_z;
         end
 
