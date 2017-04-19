@@ -453,8 +453,90 @@ classdef RoiManager < scanimage.interfaces.Component
             end
         end
         
-        % maybe need more functions here for new controls
-        
+       function set.ShiftZ(obj,val)
+            val = obj.validatePropArg('ShiftZ',val);
+            if obj.componentUpdateProperty('ShiftZ',val)
+                obj.ShiftZ = val;
+                
+                obj.coerceDefaultRoi();
+                
+                %Side effects
+                if ~obj.mroiEnable
+                    obj.clearRoiGroupScannerCoordCache();
+                    if obj.hSI.active && ~obj.preventLiveUpdate
+                        obj.hSI.hScan2D.updateLiveValues();
+                        
+                        if obj.hSI.hDisplay.forceRoiDisplayTransform
+                            obj.hSI.hDisplay.resetActiveDisplayFigs(true);
+                        end
+                    end
+                end
+            end
+        end
+
+       function set.RelTranslationX(obj,val)
+            val = obj.validatePropArg('RelTranslationX',val);
+            if obj.componentUpdateProperty('RelTranslationX',val)
+                obj.RelTranslationX = val;
+                
+                obj.coerceDefaultRoi();
+                
+                %Side effects
+                if ~obj.mroiEnable
+                    obj.clearRoiGroupScannerCoordCache();
+                    if obj.hSI.active && ~obj.preventLiveUpdate
+                        obj.hSI.hScan2D.updateLiveValues();
+                        
+                        if obj.hSI.hDisplay.forceRoiDisplayTransform
+                            obj.hSI.hDisplay.resetActiveDisplayFigs(true);
+                        end
+                    end
+                end
+            end
+       end
+       
+       function set.RelTranslationY(obj,val)
+            val = obj.validatePropArg('RelTranslationY',val);
+            if obj.componentUpdateProperty('RelTranslationY',val)
+                obj.RelTranslationY = val;
+                
+                obj.coerceDefaultRoi();
+                
+                %Side effects
+                if ~obj.mroiEnable
+                    obj.clearRoiGroupScannerCoordCache();
+                    if obj.hSI.active && ~obj.preventLiveUpdate
+                        obj.hSI.hScan2D.updateLiveValues();
+                        
+                        if obj.hSI.hDisplay.forceRoiDisplayTransform
+                            obj.hSI.hDisplay.resetActiveDisplayFigs(true);
+                        end
+                    end
+                end
+            end
+       end
+       
+       function set.RelTranslationZ(obj,val)
+            val = obj.validatePropArg('RelTranslationZ',val);
+            if obj.componentUpdateProperty('RelTranslationZ',val)
+                obj.RelTranslationZ = val;
+                
+                obj.coerceDefaultRoi();
+                
+                %Side effects
+                if ~obj.mroiEnable
+                    obj.clearRoiGroupScannerCoordCache();
+                    if obj.hSI.active && ~obj.preventLiveUpdate
+                        obj.hSI.hScan2D.updateLiveValues();
+                        
+                        if obj.hSI.hDisplay.forceRoiDisplayTransform
+                            obj.hSI.hDisplay.resetActiveDisplayFigs(true);
+                        end
+                    end
+                end
+            end
+       end
+       
         function set.scanZoomFactor(obj,val)
             val = obj.validatePropArg('scanZoomFactor',val);
             if obj.componentUpdateProperty('scanZoomFactor',val)
@@ -569,9 +651,12 @@ classdef RoiManager < scanimage.interfaces.Component
                 end
                 
                 if obj.forceSquarePixels
+                    disp('forcing square pixels')
                     if isempty(strfind(sourceProp, 'scanAngleMultiplier'))
                         %changed a pixel value. change SA multipliers appropriately
                         samSlow = obj.scanAngleMultiplierFast * obj.linesPerFrame/obj.pixelsPerLine;
+                        disp('samSlow')
+                        disp(samSlow)
                         if samSlow > 1
                             obj.scanAngleMultiplierSlow = 1;
                             obj.scanAngleMultiplierFast = obj.pixelsPerLine/obj.linesPerFrame;
@@ -580,6 +665,7 @@ classdef RoiManager < scanimage.interfaces.Component
                         end
                     else
                         if obj.forceSquarePixelation
+                            disp('forcingSquarePixelation')
                             %changed an SA multiplier. Since both forceSquarePixels and forceSquarePixelation are on, SA multipliers must be equal
                             if strcmp(sourceProp, 'scanAngleMultiplierSlow')
                                 obj.scanAngleMultiplierFast = obj.scanAngleMultiplierSlow;
@@ -589,6 +675,8 @@ classdef RoiManager < scanimage.interfaces.Component
                         else
                             %changed an SA multiplier. change pixel values appropriately
                             obj.linesPerFrame = round(obj.pixelsPerLine * obj.scanAngleMultiplierSlow/obj.scanAngleMultiplierFast);
+                            disp('forcingSquarePixelation OFF; linesPerFrame:')
+                            disp(obj.linesPerFrame)
                         end
                     end
                 end

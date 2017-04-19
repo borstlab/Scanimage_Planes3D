@@ -67,17 +67,17 @@ zPiezoRange = 280;                  % max range in microns for z piezo
 
 scanParkAngleX = 0;              % Numeric [deg]: Optical degrees from center position for X galvo to park at when scanning is inactive
 scanParkAngleY = 0;              % Numeric [deg]: Optical degrees from center position for Y galvo to park at when scanning is inactive
-scanParkAngleZ = 3;              % Numeric [microns]: Microns from center position for Z piezo to park when scanning is inactive [feature currently not implemented]
+scanParkAngleZ = 0;              % Numeric [microns]: Microns from center position for Z piezo to park when scanning is inactive [feature currently not implemented]
 
 voltsPerOpticalDegreeX = 0.5;         % galvo conversion factor from optical degrees to volts (negative values invert scan direction)
 voltsPerOpticalDegreeY = 0.5;         % galvo conversion factor from optical degrees to volts (negative values invert scan direction)
-opticalDegreesPerMicronXY = 0.053;    % conversion factor from Galvo optical degrees to microns in the sample (measure empirically with micromanipulator or a sample of known size)
-voltsPerMicronZ = 0.05;               % conversion factor from zPiezo volts to microns depth in the sample (calculate theoretically or measure)
+opticalDegreesPerMicronXY = 0.0442;   % conversion factor from Galvo optical degrees to microns in the sample (measure empirically with micromanipulator or a sample of known size)
+voltsPerMicronZ = 0.0595;             % conversion factor from zPiezo volts to microns depth in the sample. Theoretical value for this setup (depends on magnification and immersion media) is 0.0476. Empirical value is slightly higher and, the way it was measured, rather variable. Higher by 1/6 to 1/3 of the theoretical value. For now added 1/4 to the theoretical value (0.0595). 
 dummyValueZ= 0;                       % necessary atm because Piezo and Galvos are the same class, change at some point
 
-scanOffsetAngleX = 0;               % angle in optical degrees to shift command waveform applied to X-scanner
+scanOffsetAngleX = -6;               % angle in optical degrees to shift command waveform applied to X-scanner
 scanOffsetAngleY = 0;               % angle in optical degrees to shift command waveform applied to Y-scanner
-scanOffsetAngleZ = 0;               % not implemented ATM
+scanOffsetZ = 0;                    % in microns in object (not of piezo), to shift command waveform applied to Z-scanner. Large offsets better done by manually moving the piezo stage. 
 
 %Acquisition
 channelIDs = [];                    % Array of numeric channel IDs for PMT inputs. Leave empty for default channels (AI0...AIN-1)

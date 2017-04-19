@@ -91,7 +91,8 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             ao_volts.G(:,1) = obj.fov2volts(path_FOV.G(:,1),1);
             ao_volts.G(:,2) = obj.fov2volts(path_FOV.G(:,2),2);
             ao_volts.G(:,3) = obj.fov2volts(path_FOV.G(:,3),3);
-            
+            max(ao_volts.G(:,3))
+            assert(max(ao_volts.G(:,3)) < 4, 'Output voltage for z scanner is larger than 4V. Change scan parameters. This is to avoid crashing of the z mirror into the z objective.')
             if obj.hasBeams
                 bIDs = obj.scanners{obj.BEAM_SCANNER_ID}.beamIDs;
                 ao_volts.B = zeros(size(path_FOV.B));
@@ -288,6 +289,7 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
         function path_FOV = interpolateTransits(obj,path_FOV)
             path_FOV.G(:,1) = scanimage.mroi.util.interpolateCircularNaNRanges(path_FOV.G(:,1),[0,1]);
             path_FOV.G(:,2) = scanimage.mroi.util.interpolateCircularNaNRanges(path_FOV.G(:,2),[0,1]);
+            path_FOV.G(:,3) = scanimage.mroi.util.interpolateCircularNaNRanges(path_FOV.G(:,3),[0,1]);
             
             % beams output FOV
             if obj.hasBeams
@@ -764,6 +766,7 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             A = cellfun(@(m) m.fullAngleDegrees,obj.scanners(1:3));     % amplitude, 15 default, for the third scanner this is in microns
             V = cellfun(@(m) m.voltsPerDegree,obj.scanners(1:3));       % degrees to volts conversion
             M = cellfun(@(m) m.opticalDegreesPerMicronXY,obj.scanners(1:3)); %  degrees to microns conversion; IMPORTANT NOTE: for scanners 1 and 2 (the actual galvos) this is opticalDegreesPerMicronXY in MDF. For scanner 3 (the piezo), this is voltsPerMicronZ. This has to be fixed in a future version.
+            S = cellfun(@(m) m.scanOffsetAngle,obj.scanners(1:3)); 
             
             voltsPerMicronX = M(1)*V(1);
             voltsPerMicronY = M(2)*V(2);
@@ -773,11 +776,10 @@ classdef GalvoGalvo < scanimage.mroi.scannerset.ScannerSet
             voltsPerMicron = [voltsPerMicronX voltsPerMicronX voltsPerMicronZ];
             
             fullRangeMicrons = [A(1)/M(1) A(2)/M(2) A(3)];
-            O = [A(1)/M(1) A(2)/M(2) A(3)]./2;
-            
+            scanOffsetMicrons = [S(1)/M(1) S(2)/M(2) S(3)];
+            O = [A(1)/M(1), A(2)/M(2), A(3)]./2 + scanOffsetMicrons;
             % convert to volts
             ao_volts=zeros(size(path_FOV));
-            
             iter = 1;
             for scanner = iscanner
                 ao_volts(:,iter)=voltsPerMicron(scanner)*(path_FOV(:,iter)*fullRangeMicrons(scanner)-O(scanner));

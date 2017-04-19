@@ -20,6 +20,8 @@ classdef Display < scanimage.interfaces.Component
         roiProjectionDisplayEdgeAlpha = 1;
         
         renderer = 'auto';                       % one of {'auto','painters','opengl'}
+        hAxes = {};
+        hFigs = [];
     end
     
     properties (SetObservable, Hidden)
@@ -36,7 +38,7 @@ classdef Display < scanimage.interfaces.Component
     
     %% FRIEND PROPS    
     properties (Hidden, SetAccess=private)
-        hFigs = [];
+        
         hMergeFigs = [];
     end
     
@@ -53,7 +55,7 @@ classdef Display < scanimage.interfaces.Component
         
     %% INTERNAL PROPS
     properties (Hidden, SetAccess=private)
-        hAxes = {};
+        
         hMergeAxes = [];
         scanfieldDisplayFrameSelection;
         rollingStripeDataBufferDirty;           % Indicates that there is new data in the buffer that has not been displayed

@@ -73,6 +73,8 @@ classdef Logging < scanimage.interfaces.Class
             
             obj.mRoiLogging = obj.mRoiLogging || ~unique(cumPixelResolutionAtZ(:,1)) || ~unique(cumPixelResolutionAtZ(:,2));
             obj.linesPerFrame = max(cumPixelResolutionAtZ(:,2));
+            disp('Logging, linesPerFrame')
+            disp(obj.linesPerFrame)
             obj.pixelsPerLine = max(cumPixelResolutionAtZ(:,1));
                         
             % create TifStream objects
@@ -81,12 +83,16 @@ classdef Logging < scanimage.interfaces.Class
                 obj.hTifs = cell(1,numChannels);
                 for i = 1:numChannels
                     chan = obj.hLinScan.hSI.hChannels.channelSave(i);
+                    disp('creating TIfStream objects, linePerFrame')
+                    disp(obj.linesPerFrame)
                     obj.hTifs{i} = scanimage.components.scan2d.linscan.TifStream(obj.makeFullFilePath(chan),...
                         obj.pixelsPerLine, obj.linesPerFrame, obj.blankFrameDescription,...
                         'dataType',obj.hLinScan.channelsDataType,'overwrite',true);
                 end
             else
                 obj.hTifs = cell(1,1);
+                disp('creating TIfStream objects, linePerFrame')
+                disp(obj.linesPerFrame)
                 obj.hTifs{1} = scanimage.components.scan2d.linscan.TifStream(obj.makeFullFilePath,...
                     obj.pixelsPerLine, obj.linesPerFrame, obj.blankFrameDescription,...
                     'dataType',obj.hLinScan.channelsDataType,'overwrite',true); 
@@ -139,9 +145,13 @@ classdef Logging < scanimage.interfaces.Class
                 if obj.mRoiLogging
                     line = 1;
                     tempbuf = zeros(obj.pixelsPerLine,obj.linesPerFrame,obj.hLinScan.channelsDataType);
+                    disp('SIZE OF tempbuf')
+                    disp(size(tempbuf))
                     for roiIdx = 1:length(stripeData.roiData)
                         imdata = stripeData.roiData{roiIdx}.imageData{chIdx}{1};
                         dims = size(imdata);
+                        disp('dims of imdata')
+                        disp(dims)
                         tempbuf(1:dims(1),line:line+dims(2)-1) = imdata;
                         line = line + dims(2);
                     end

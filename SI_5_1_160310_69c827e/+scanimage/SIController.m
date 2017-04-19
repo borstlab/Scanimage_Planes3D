@@ -1665,6 +1665,9 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
                     sz = [obj.hModel.hRoiManager.pixelsPerLine obj.hModel.hRoiManager.linesPerFrame];
                     r = floor(pb.rect .* [sz sz]);
                     s = num2str(r,'%d   ');
+                    disp(sz)
+                    disp(r)
+                    disp(s)
                 end
                 set(obj.hGUIData.powerBoxControlsV4.etPosition,'String',s);
                 obj.powerBoxUpdateBoxFigure();
@@ -2875,6 +2878,7 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             elseif state == 3
                 cmap = colormap(copper);
                 colors = wave.G(:,3);
+                cmap(:,4) = 0.5;
             else
                 cmap = colormap(copper);
                 colors = wave.G(:,3);
@@ -2891,7 +2895,9 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             hold on
             first_notnan = wave.G(~isnan(wave.G(:,3)),3);
             first_notnan = first_notnan(1);
-            plot3(wave.G(1,1),wave.G(1,2),first_notnan,'r.','MarkerSize',5)
+            s = plot3(wave.G(1,1),wave.G(1,2),first_notnan,'r.','MarkerSize',5);
+            set(gca,'zdir','reverse')
+            
             hold off
             h = colorbar('location','westoutside','Box','off');
             if state == 2

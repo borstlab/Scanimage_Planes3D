@@ -131,6 +131,8 @@ classdef RoiDisplay < handle
             if strcmpi('no_transform',displayMode);
                 if ~hSI.hRoiManager.mroiEnable && hSI.hRoiManager.forceSquarePixels && hSI.hRoiManager.scanAngleMultiplierSlow ~= 0
                     yRatio = abs(hSI.hRoiManager.linesPerFrame / hSI.hRoiManager.pixelsPerLine);
+                    disp('in ROIDisplay, initialize')
+                    disp(yRatio)
                 else
                     yRatio = 1;
                 end

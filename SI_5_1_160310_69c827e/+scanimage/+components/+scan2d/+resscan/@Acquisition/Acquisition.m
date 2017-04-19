@@ -336,6 +336,10 @@ classdef Acquisition < scanimage.interfaces.Class
         function val = get.periodsPerFrame(obj)
             linesPerPeriod = 2^(obj.hScan.bidirectional);
             val = obj.linesPerFrame / linesPerPeriod;
+            disp('linesPerPeriod')
+            disp(linesPerPeriod)
+            disp('val')
+            disp(val)
         end
         
         function val = get.dcOvervoltage(obj)
@@ -608,7 +612,8 @@ classdef Acquisition < scanimage.interfaces.Class
         
         function zprpResizeAcquisition(obj)
             obj.frameSizePixels = obj.pixelsPerLine * obj.linesPerFrame; %not including frame tag
-            
+            disp('frameSizePixels')
+            disp(obj.frameSizePixels)
             if obj.hScan.multiChannel
                 fifoElementSizeBytes = obj.FIFO_ELEMENT_SIZE_BYTES_MULTI_CHAN;
             else

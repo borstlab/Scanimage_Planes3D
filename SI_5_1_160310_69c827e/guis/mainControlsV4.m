@@ -22,7 +22,7 @@ function varargout = mainControlsV4(varargin)
 
 % Edit the above text to modify the response to help mainControlsV4
 
-% Last Modified by GUIDE v2.5 03-Nov-2016 13:40:07
+% Last Modified by GUIDE v2.5 13-Feb-2017 11:39:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -2150,3 +2150,84 @@ handles.hController.zeroShiftZ(hObject);
 handles.hController.updateZDisplay(hObject,handles);
 state = sum(sign(get(handles.hController.hGUIData.zDisplayV1.setColorMap,'State')));
 handles.hController.updateZDisplay(hObject,handles, state);
+
+
+
+function SetZDistance_Callback(hObject, eventdata, handles)
+% hObject    handle to SetZDistance (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of SetZDistance as text
+%        str2double(get(hObject,'String')) returns contents of SetZDistance as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function SetZDistance_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to SetZDistance (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function displayXRotAngle_Callback(hObject, eventdata, handles)
+% hObject    handle to displayXRotAngle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of displayXRotAngle as text
+%        str2double(get(hObject,'String')) returns contents of displayXRotAngle as a double
+    get(hObject,'String')
+
+% --- Executes during object creation, after setting all properties.
+function displayXRotAngle_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to displayXRotAngle (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in CalculateXRotation.
+function CalculateXRotation_Callback(hObject, eventdata, handles)
+% hObject    handle to CalculateXRotation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    y_coo = zeros(2,1);
+    
+    for i = 1:2
+        h = most.gui.selectFigure(handles.hController.hManagedGUIs);
+        coordinates = ginput(1);
+        y_coo(i) = coordinates(2);
+        x_line = 0:0.0001:1;
+        y_line = ones(size(x_line))*coordinates(2);
+        hp = plot(gca, x_line, y_line, 'g', 'LineWidth', 2);
+        pause(2)
+        delete(hp)
+    end
+    
+    zDistance = get(handles.hController.hGUIData.mainControlsV4.SetZDistance, 'String')
+    if str2double(zDistance) == 0
+        disp('zDistance is 0. Invalid entry')
+        set(handles.hController.hGUIData.mainControlsV4.displayXRotAngle, 'String', 0);
+    else
+        zoom = handles.hModel.hRoiManager.scanZoomFactor;
+        fillfrac = handles.hModel.hScan2D.fillFractionSpatial;
+        fullAngleX = handles.hModel.hScan2D.mdfData.xGalvoAngularRange;
+        ODperMicronXY = handles.hModel.hScan2D.mdfData.opticalDegreesPerMicronXY;
+        yDistMicrons = fullAngleX*fillfrac/(ODperMicronXY*zoom)*(y_coo(2)-y_coo(1))
+        xRot = atan2(str2double(zDistance), yDistMicrons)*180/pi
+        set(handles.hController.hGUIData.mainControlsV4.displayXRotAngle, 'String', xRot);
+    end
+    
+    

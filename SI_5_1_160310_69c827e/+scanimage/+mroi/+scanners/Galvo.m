@@ -3,6 +3,7 @@ classdef Galvo < handle
     properties
         sampleRateHz;
         fullAngleDegrees;
+        scanOffsetAngle;
         voltsPerDegree;
         flytoTimeSeconds;
         flybackTimeSeconds;
@@ -27,6 +28,7 @@ classdef Galvo < handle
     methods
         % See Note (1)
         function obj=Galvo(fullAngleDegrees,...
+                           scanOffsetAngle,...
                            voltsPerDegree,...
                            opticalDegreesPerMicronXY,...
                            flytoTimeSeconds,...
@@ -34,6 +36,7 @@ classdef Galvo < handle
                            parkAngleDegrees,...
                            sampleRateHz)
             obj.fullAngleDegrees   = fullAngleDegrees;
+            obj.scanOffsetAngle    = scanOffsetAngle;
             obj.voltsPerDegree     = voltsPerDegree;
             obj.flytoTimeSeconds   = flytoTimeSeconds;
             obj.flybackTimeSeconds = flybackTimeSeconds;
