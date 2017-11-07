@@ -2828,6 +2828,22 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             obj.hModel.hRoiManager.scanRotationY = 0;
         end
         
+        function zeroRelTranslationX(obj,src)
+            obj.hModel.hRoiManager.RelTranslationX = 0;
+        end
+        
+        function zeroRelTranslationY(obj,src)
+            obj.hModel.hRoiManager.RelTranslationY = 0;
+        end
+        
+        function zeroRelTranslationZ(obj,src)
+            obj.hModel.hRoiManager.RelTranslationZ = 0;
+        end
+        
+        function zeroRelRotation(obj,src)
+            obj.hModel.hRoiManager.RelRotation = 0;
+        end
+        
         function zeroShiftZ(obj)
             obj.hModel.hRoiManager.ShiftZ = 0;
         end
@@ -2848,6 +2864,9 @@ classdef SIController < most.Controller & scanimage.interfaces.Class
             obj.hModel.hRoiManager.RelTranslationX = obj.hModel.hRoiManager.RelTranslationX + inc;
         end
         
+        function changeRelRotation(obj,src,inc)
+            obj.hModel.hRoiManager.RelRotation = obj.hModel.hRoiManager.RelRotation + inc;
+        end
         
         function updateZDisplay(obj,src,inc,state)
             figure(obj.hGUIData.zDisplayV1.figure1);
@@ -3102,6 +3121,7 @@ function s = lclInitPropBindings(hModel)
     s.hRoiManager.RelTranslationX          = struct('GuiIDs',{{'mainControlsV4','RelTranslationX'}});
     s.hRoiManager.RelTranslationY          = struct('GuiIDs',{{'mainControlsV4','RelTranslationY'}});
     s.hRoiManager.RelTranslationZ          = struct('GuiIDs',{{'mainControlsV4','RelTranslationZ'}});
+    s.hRoiManager.RelRotation              = struct('GuiIDs',{{'mainControlsV4','RelRotation'}});
     s.hRoiManager.scanZoomFactor           = struct('GuiIDs',{{'mainControlsV4' 'pcZoom'}});
     s.hRoiManager.scanVolumeRate           = struct('GuiIDs',{{'fastZControlsV4', 'etVolumeRate'}},'ViewPrecision','%.2f');
     s.hRoiManager.mroiEnable               = struct('GuiIDs',{{'mainControlsV4', 'cbEnableMroi'}},'Callback','updateFrameBatchOptions');

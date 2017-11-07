@@ -13,6 +13,7 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
         xRelative
         yRelative
         zRelative
+        degRelative
     end
     
     %% Abstract methods realization scanimage.mroi.scanfield.ScanField
@@ -60,11 +61,19 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
             r = r + repmat(obj.translationToOrigin(),size(r,2),1)'; 
             r = r.*repmat(obj.scale(),size(r,2),1)';
             RM = obj.rotationMatrix();
+            RMrel = obj.relrotationMatrix();
             r = r';
+            r_o = zeros(size(r));
+            
+            for dim = 1:3 
+                r_o(:,dim) = r(:,1)*RM(1,dim) + r(:,2)*RM(2,dim) + r(:,3)*RM(3,dim);
+            end
+            
             r_out = zeros(size(r));
             for dim = 1:3 
-                r_out(:,dim) = r(:,1)*RM(1,dim) + r(:,2)*RM(2,dim) + r(:,3)*RM(3,dim);
+                r_out(:,dim) = r_o(:,1)*RMrel(1,dim) + r_o(:,2)*RMrel(2,dim) + r_o(:,3)*RMrel(3,dim);
             end
+            
             r = r_out';
             r = r + repmat(obj.translationToRectangle(),size(r,2),1)';
             r = r + repmat(obj.RelativeTranslation(),size(r,2),1)';
@@ -101,6 +110,19 @@ classdef RotatedRectangle < scanimage.mroi.scanfield.ImagingField
             RM_z = [cos(z_angle) -sin(z_angle) 0; sin(z_angle) cos(z_angle) 0; 0 0 1];
             RM = RM_x*RM_y*RM_z;
         end
+        
+        function RM=relrotationMatrix(obj)
+            
+            angle = obj.degRelative*pi/180;
+            
+            R = obj.rotationMatrix();
+            r = [0 0 1]*R; %orthogonal vector of plane; rotation axis for relRotation
+            C = cos(angle);
+            S = sin(angle);
+            t = 1 - C;
+            RM = [t*r(1)^2+C   t*r(1)*r(2)-S*r(3)   t*r(1)*r(3)+S*r(2) ; t*r(1)*r(2)+S*r(3)   t*r(2)^2+C   t*r(2)*r(3)-S*r(1) ; t*r(1)*r(3)-S*r(2)   t*r(2)*r(3)+S*r(1)   t*r(3)^2+C];
+        end
+
 
         function O=translationToOrigin(obj)
             O=[-0.5 -0.5 0];

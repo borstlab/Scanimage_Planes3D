@@ -14,6 +14,7 @@ classdef RoiManager < scanimage.interfaces.Component
         RelTranslationX = 0;            % [microns] 
         RelTranslationY = 0;            % [microns] 
         RelTranslationZ = 0;            % [microns] 
+        RelRotation = 0;                % [degrees]
         scanAngleMultiplierSlow = 1;    % [1] defaultROI only: scale slow output
         scanAngleMultiplierFast = 1;    % [1] defaultROI only: scale fast scanner output
         scanAngleShiftSlow = 0;         % [1] defaultROI only: shift slow scanner output (in FOV coordinates)
@@ -77,7 +78,7 @@ classdef RoiManager < scanimage.interfaces.Component
         COMPONENT_NAME = 'RoiGroup';                        % [char array] short name describing functionality of component e.g. 'Beams' or 'FastZ'
         PROP_TRUE_LIVE_UPDATE = {};                         % Cell array of strings specifying properties that can be set while the component is active
         PROP_FOCUS_TRUE_LIVE_UPDATE = {...                  % Cell array of strings specifying properties that can be set while focusing
-            'scanZoomFactor','scanRotation','scanRotationX','scanRotationY','ShiftZ','RelTranslationX','RelTranslationY','RelTranslationZ','scanAngleMultiplierSlow',...
+            'scanZoomFactor','scanRotation','scanRotationX','scanRotationY','ShiftZ','RelTranslationX','RelTranslationY','RelTranslationZ','RelRotation', 'scanAngleMultiplierSlow',...
             'scanAngleMultiplierFast','scanAngleShiftSlow','scanAngleShiftFast'};
         DENY_PROP_LIVE_UPDATE = {};                         % Cell array of strings specifying properties for which a live update is denied (during acqState = Focus)
         
@@ -204,6 +205,7 @@ classdef RoiManager < scanimage.interfaces.Component
             obj.roiGroupDefault_.rois(1).scanfields(1).zRelative = RelTranslationZFOV;
             obj.roiGroupDefault_.rois(1).scanfields(1).yRelative = RelTranslationYFOV;
             obj.roiGroupDefault_.rois(1).scanfields(1).xRelative = RelTranslationXFOV;
+            obj.roiGroupDefault_.rois(1).scanfields(1).degRelative = obj.RelRotation;
             obj.roiGroupDefault_.rois(1).scanfields(1).pixelResolution = [obj.pixelsPerLine, obj.linesPerFrame];
             
             val = obj.roiGroupDefault_;
@@ -537,6 +539,27 @@ classdef RoiManager < scanimage.interfaces.Component
             end
        end
        
+       function set.RelRotation(obj,val)
+            val = obj.validatePropArg('RelRotation',val);
+            if obj.componentUpdateProperty('RelRotation',val)
+                obj.RelRotation = val;
+                
+                obj.coerceDefaultRoi();
+                
+                %Side effects
+                if ~obj.mroiEnable
+                    obj.clearRoiGroupScannerCoordCache();
+                    if obj.hSI.active && ~obj.preventLiveUpdate
+                        obj.hSI.hScan2D.updateLiveValues();
+                        
+                        if obj.hSI.hDisplay.forceRoiDisplayTransform
+                            obj.hSI.hDisplay.resetActiveDisplayFigs(true);
+                        end
+                    end
+                end
+            end
+        end
+        
         function set.scanZoomFactor(obj,val)
             val = obj.validatePropArg('scanZoomFactor',val);
             if obj.componentUpdateProperty('scanZoomFactor',val)
@@ -719,6 +742,7 @@ s.ShiftZ                    = struct('Classes','numeric','Attributes',{{'scalar'
 s.RelTranslationX           = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.RelTranslationY           = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.RelTranslationZ           = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
+s.RelRotation               = struct('Classes','numeric','Attributes',{{'scalar','finite'}});
 s.scanAngleMultiplierSlow   = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',0,'<=',1}});
 s.scanAngleMultiplierFast   = struct('Classes','numeric','Attributes',{{'scalar','finite','>=',0,'<=',1}});
 s.forceSquarePixelation     = struct('Classes','binaryflex','Attributes',{{'scalar'}});
