@@ -140,7 +140,7 @@ classdef TifStream < scanimage.interfaces.Class
                     assert('false','TifStream: Unsupported datatype: ''%s''',obj.dataType);
             end            
             
-            obj.nominalStripSize = 8*1024; %Determines target number of pixels to place in the strips comprising each frame
+            obj.nominalStripSize = 2*1024; %Determines target number of pixels to place in the strips comprising each frame #ANNA MESSING ABOUT: original 8*1024
             obj.frameWidth = frameWidth;
             obj.frameHeight = frameHeight;
             obj.imageDescriptionLength = length(obj.imageDescription); %store this so that offset to 'stripOffsets' tag data can be computed
